@@ -1,0 +1,7 @@
+.idea/
+node_modules/
+dist/*
+!dist/lib
+*.log
+*.map
+.DS_Store
