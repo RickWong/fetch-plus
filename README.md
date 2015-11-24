@@ -2,6 +2,8 @@
 
 Generic REST API client using [Fetch API](https://github.com/whatwg/fetch).
 
+![version](https://img.shields.io/npm/v/fetch-rest.svg) ![license](https://img.shields.io/npm/l/fetch-rest.svg) [![Package Quality](http://npm.packagequality.com/shield/fetch-rest.svg)](http://packagequality.com/#?package=fetch-rest) ![installs](https://img.shields.io/npm/dt/fetch-rest.svg) ![downloads](https://img.shields.io/github/downloads/RickWong/fetch-rest/latest/total.svg)
+
 ## Features
 
 - Uses the standard Fetch API.
