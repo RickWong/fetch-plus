@@ -22,9 +22,9 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch).
 import {createEndpoint} from "fetch-rest";
 
 // Chainable:
-createEndpoint("http://jsonplaceholder.typicode.com", fetchApiOptions)
-	.createResource("comments", moreFetchApiOptions)
-	.browse({postId: 12}, evenMoreFetchApiOptions)
+createEndpoint("http://jsonplaceholder.typicode.com")
+	.createResource("comments")
+	.browse({postId: 12})
 	.then(response => response.json())
 	.then(json => console.log(json));
 
@@ -32,10 +32,10 @@ createEndpoint("http://jsonplaceholder.typicode.com", fetchApiOptions)
 import {createEndpoint, createResource, browse} from "fetch-rest";
 
 // Or functional:
-const endpoint = createEndpoint("http://jsonplaceholder.typicode.com", fetchApiOptions);
-const comments = createResource(endpoint, "comments", moreFetchApiOptions);
+const endpoint = createEndpoint("http://jsonplaceholder.typicode.com");
+const comments = createResource(endpoint, "comments");
 
-browse(comments, {postId: 12}, evenMoreFetchApiOptions)
+browse(comments, {postId: 12})
 	.then(response => response.json())
 	.then(json => console.log(json));
 
