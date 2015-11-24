@@ -19,18 +19,25 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch).
 ## Usage
 
 ````js
-import {describeEndpoint} from "fetch-rest";
+import {createEndpoint} from "fetch-rest";
 
-// One-liner (recommended)
-describeEndpoint("http://jsonplaceholder.typicode.com", fetchApiOptions).describeResource("comments", moreFetchApiOptions).browse({postId: 12}, overrideFetchApiOptions).then(response => response.json()).then(json => console.log(json));
+// Chainable:
+createEndpoint("http://jsonplaceholder.typicode.com", fetchApiOptions)
+	.createResource("comments", moreFetchApiOptions)
+	.browse({postId: 12}, evenMoreFetchApiOptions)
+	.then(response => response.json())
+	.then(json => console.log(json));
 
 
-import {describeEndpoint, describeResource, browse} from "fetch-rest";
+import {createEndpoint, createResource, browse} from "fetch-rest";
 
-// Three-liner (functional)
-const endpoint = describeEndpoint("http://jsonplaceholder.typicode.com", fetchApiOptions);
-const comments = describeResource(endpoint, "comments", moreFetchApiOptions);
-browse(comments, {postId: 12}, overrideFetchApiOptions).then(response => response.json()).then(json => console.log(json));
+// Or functional:
+const endpoint = createEndpoint("http://jsonplaceholder.typicode.com", fetchApiOptions);
+const comments = createResource(endpoint, "comments", moreFetchApiOptions);
+
+browse(comments, {postId: 12}, evenMoreFetchApiOptions)
+	.then(response => response.json())
+	.then(json => console.log(json));
 
 ````
 

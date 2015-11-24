@@ -7,29 +7,26 @@ if (typeof fetch !== "function") {
 	throw new TypeError("Fetch API required but not available");
 }
 
-function cleanSlashes (s) {
+function _trimSlashes (s) {
 	return s.toString().replace(/(^\/+|\/+$)/g, "");
 }
 
-function describeEndpoint (url, options) {
+function createEndpoint (url, options) {
 	const endpoint = {
 		url,
 		options
 	};
 
-	endpoint.describeResource = describeResource.bind(null, endpoint);
+	endpoint.createResource = createResource.bind(null, endpoint);
 
 	return endpoint;
 }
 
-function describeResource (_endpoint, path, options) {
+function createResource (_endpoint, path, options) {
 	const resource = {
 		path,
-		url: cleanSlashes(_endpoint.url) + "/" + cleanSlashes(path),
-		options: {
-			..._endpoint.options,
-			...options
-		},
+		options,
+		url: _trimSlashes(_endpoint.url) + "/" + _trimSlashes(path),
 		endpoint: _endpoint
 	};
 
@@ -43,55 +40,44 @@ function describeResource (_endpoint, path, options) {
 	return resource;
 }
 
-function browse (_resource, query, options) {
-	return fetch(_resource.url + "?" + queryString.stringify(query), {
+function _callFetch (_resource, id, query, options) {
+	id    = id ? "/" + encodeURI(_trimSlashes(id)) : "";
+	query = query ? "?" + queryString.stringify(query) : "";
+
+	return fetch(_resource.url + id + query, {
+		..._resource.endpoint.options,
 		..._resource.options,
 		...options
 	});
+}
+
+function browse (_resource, query, options) {
+	return _callFetch(_resource, null, query, {method: "GET", ...options});
 }
 
 function read (_resource, id, query, options) {
-	return fetch(_resource.url + "/" + encodeURI(cleanSlashes(id)) + "?" + queryString.stringify(query), {
-		..._resource.options,
-		...options
-	});
+	return _callFetch(_resource, id, query, {method: "GET", ...options});
 }
 
 function edit (_resource, id, query, options) {
-	return fetch(_resource.url + "/" + encodeURI(cleanSlashes(id)) + "?" + queryString.stringify(query), {
-		..._resource.options,
-		method: "PATCH",
-		...options
-	});
+	return _callFetch(_resource, id, query, {method: "PATCH", ...options});
 }
 
 function replace (_resource, id, query, options) {
-	return fetch(_resource.url + "/" + encodeURI(cleanSlashes(id)) + "?" + queryString.stringify(query), {
-		..._resource.options,
-		method: "PUT",
-		...options
-	});
+	return _callFetch(_resource, id, query, {method: "PUT", ...options});
 }
 
 function add (_resource, query, options) {
-	return fetch(_resource.url + "?" + queryString.stringify(query), {
-		..._resource.options,
-		method: "POST",
-		...options
-	});
+	return _callFetch(_resource, null, query, {method: "POST", ...options});
 }
 
 function destroy (_resource, id, query, options) {
-	return fetch(_resource.url + "/" + encodeURI(cleanSlashes(id)) + "?" + queryString.stringify(query), {
-		..._resource.options,
-		method: "DELETE",
-		...options
-	});
+	return _callFetch(_resource, id, query, {method: "DELETE", ...options});
 }
 
 module.exports = {
-	describeEndpoint,
-	describeResource,
+	createEndpoint,
+	createResource,
 	browse,
 	read,
 	edit,

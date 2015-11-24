@@ -2,45 +2,45 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 import __fetch from "isomorphic-fetch";
-import {describeEndpoint, describeResource} from "lib/fetch-rest";
+import {createEndpoint} from "lib/fetch-rest";
 
-function renderJSON (json) {
-	const root            = document.getElementById("react-root");
-	root.style.fontFamily = "monospace";
-
-	root.innerHTML += "" + JSON.stringify(json) + "<br/>";
-}
-
-try {
-	const endpoint = describeEndpoint("http://jsonplaceholder.typicode.com", {
+function createApi ()
+{
+	const endpoint = createEndpoint("http://jsonplaceholder.typicode.com", {
 		headers: {
 			Authorization: "Bearer hello_world"
 		}
 	});
 
-	const posts    = describeResource(endpoint, "posts");
-	const comments = describeResource(endpoint, "comments");
-	const albums   = describeResource(endpoint, "albums");
-	const photos   = describeResource(endpoint, "photos");
-	const todos    = describeResource(endpoint, "todos");
-	const users    = describeResource(endpoint, "users");
+	endpoint.posts    = endpoint.createResource("posts");
+	endpoint.comments = endpoint.createResource("comments");
+	endpoint.albums   = endpoint.createResource("albums");
+	endpoint.photos   = endpoint.createResource("photos");
+	endpoint.todos    = endpoint.createResource("todos");
+	endpoint.users    = endpoint.createResource("users");
 
-	posts.browse({_limit: 10}, {}).then(res => res.json()).then(renderJSON);
-
-	comments.browse({_limit: 10, postId: 1}, {}).then(res => res.json()).then(renderJSON);
-
-	posts.read(2, {}, {}).then(res => res.json()).then(renderJSON);
-
-	posts.edit(3, {}, {body: "whatsup"}).then(res => res.json()).then(renderJSON);
-
-	posts.add({}, {body: "whatsup"}).then(res => res.json()).then(renderJSON);
-
-	posts.replace(4, {}, {body: "whatsup"}).then(res => res.json()).then(renderJSON);
-
-	posts.destroy(5, {}, {}).then(res => res.json()).then(renderJSON);
+	return endpoint;
 }
 
-catch (error)
-{
-	throw error;
+const api = createApi();
+
+api.posts.browse({_limit: 1}, {}).then(res => res.json()).then(renderJSON);
+
+api.comments.browse({_limit: 2, postId: 2}, {}).then(res => res.json()).then(renderJSON);
+
+api.posts.read(3, {}, {}).then(res => res.json()).then(renderJSON);
+
+api.posts.edit(4, {}, {body: "body"}).then(res => res.json()).then(renderJSON);
+
+api.posts.add({postId: 5}, {body: "body"}).then(res => res.json()).then(renderJSON);
+
+api.posts.replace(6, {}, {body: "body"}).then(res => res.json()).then(renderJSON);
+
+api.posts.destroy(7, {}, {}).then(res => res.json()).then(renderJSON);
+
+
+function renderJSON (json) {
+	const root            = document.getElementById("react-root");
+	root.style.fontFamily = "monospace";
+	root.innerHTML += "" + JSON.stringify(json) + "<br/>";
 }
