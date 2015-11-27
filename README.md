@@ -7,8 +7,8 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch).
 ## Features
 
 - Uses the standard Fetch API.
-- Generic interface to communicate with any REST API client as you need.
-- Runs in Node and browsers. (BYO Fetch API and Promises polyfills though)
+- Generic interface to communicate with any REST API.
+- Runs in Node and browsers but bring your own Fetch API and ES Promise polyfills.
 
 ## Installation
 
