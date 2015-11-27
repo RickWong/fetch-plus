@@ -7,7 +7,7 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch).
 ## Features
 
 - Uses the standard Fetch API.
-- Builder-interface to configure the generic REST API client as you need.
+- Generic interface to communicate with any REST API client as you need.
 - Runs in Node and browsers. (BYO Fetch API and Promises polyfills though)
 
 ## Installation
@@ -21,24 +21,20 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch).
 ````js
 import {createEndpoint} from "fetch-rest";
 
-// Chainable:
-createEndpoint("http://jsonplaceholder.typicode.com")
-	.createResource("comments")
-	.browse({postId: 12})
-	.then(response => response.json())
-	.then(json => console.log(json));
+const jsonApi = createEndpoint(
+	"http://jsonplaceholder.typicode.com",  // API server URL
+	{cache: "no-cache"}                     // Fetch API options
+);
 
-
-import {createEndpoint, createResource, browse} from "fetch-rest";
-
-// Or functional:
-const endpoint = createEndpoint("http://jsonplaceholder.typicode.com");
-const comments = createResource(endpoint, "comments");
-
-browse(comments, {postId: 12})
-	.then(response => response.json())
-	.then(json => console.log(json));
-
+jsonApi.browse(             // REST action: browse, read, edit, add, destroy, or replace
+	"comments",             // Resource name or array [name, [...id, [...name, [...id]]] et cetera]
+	{postId: 12},           // Query string parameters
+	{json: true}            // Additional Fetch API options
+).then(
+	json => console.log(json)
+).catch(
+	error => console.warn(error)
+);
 ````
 
 ## Community

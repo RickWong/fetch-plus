@@ -56,9 +56,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
-	                                                                                                                                                                                                                                                                   * @copyright © 2015, Rick Wong. All rights reserved.
-	                                                                                                                                                                                                                                                                   */
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            * @copyright © 2015, Rick Wong. All rights reserved.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            */
 
 	var _queryString = __webpack_require__(1);
 
@@ -66,77 +68,191 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 	if (typeof fetch !== "function") {
 		throw new TypeError("Fetch API required but not available");
 	}
 
-	function _trimSlashes(s) {
-		return s.toString().replace(/(^\/+|\/+$)/g, "");
+	function _trimSlashes(string) {
+		return string.toString().replace(/(^\/+|\/+$)/g, "");
 	}
 
-	function createEndpoint(url, options) {
+	function _get(value) {
+		return typeof value === "function" ? value() : value;
+	}
+
+	function _objectGet(object) {
+		var mapped = {};
+
+		if (typeof object[Symbol.iterator] !== "function") {
+			return object;
+		}
+
+		var _iteratorNormalCompletion = true;
+		var _didIteratorError = false;
+		var _iteratorError = undefined;
+
+		try {
+			for (var _iterator = object[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+				var _step$value = _slicedToArray(_step.value, 2);
+
+				var key = _step$value[0];
+				var value = _step$value[1];
+
+				mapped[key] = (typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? _objectGet(value) : _get(value);
+			}
+		} catch (err) {
+			_didIteratorError = true;
+			_iteratorError = err;
+		} finally {
+			try {
+				if (!_iteratorNormalCompletion && _iterator.return) {
+					_iterator.return();
+				}
+			} finally {
+				if (_didIteratorError) {
+					throw _iteratorError;
+				}
+			}
+		}
+
+		return mapped;
+	}
+
+	function createEndpoint(url) {
+		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
 		var endpoint = {
 			url: url,
 			options: options
 		};
 
-		endpoint.createResource = createResource.bind(null, endpoint);
+		endpoint.browse = browse.bind(null, endpoint);
+		endpoint.read = read.bind(null, endpoint);
+		endpoint.edit = edit.bind(null, endpoint);
+		endpoint.replace = replace.bind(null, endpoint);
+		endpoint.add = add.bind(null, endpoint);
+		endpoint.destroy = destroy.bind(null, endpoint);
 
 		return endpoint;
 	}
 
-	function createResource(_endpoint, path, options) {
-		var resource = {
-			path: path,
-			options: options,
-			url: _trimSlashes(_endpoint.url) + "/" + _trimSlashes(path),
-			endpoint: _endpoint
-		};
+	function _callFetch(endpoint, path, query, options) {
+		var combinedOptions = undefined;
 
-		resource.browse = browse.bind(null, resource);
-		resource.read = read.bind(null, resource);
-		resource.edit = edit.bind(null, resource);
-		resource.replace = replace.bind(null, resource);
-		resource.add = add.bind(null, resource);
-		resource.destroy = destroy.bind(null, resource);
+		return new Promise(function (resolve, reject) {
+			var url = _trimSlashes(_get(endpoint.url)) + "/";
 
-		return resource;
+			path = _get(path);
+
+			if (!(path instanceof Array)) {
+				path = [path];
+			}
+
+			path = path.map(_get).map(_trimSlashes).map(encodeURI).join("/");
+
+			if ((typeof query === "undefined" ? "undefined" : _typeof(query)) === "object") {
+				query = "?" + encodeURI(_queryString2.default.stringify(_objectGet(query)));
+			} else {
+				query = "";
+			}
+
+			combinedOptions = _extends({}, _objectGet(endpoint.options), _objectGet(options));
+
+			resolve({ url: url, path: path, query: query, combinedOptions: combinedOptions });
+		}).then(function (_ref) {
+			var url = _ref.url;
+			var path = _ref.path;
+			var query = _ref.query;
+			var combinedOptions = _ref.combinedOptions;
+
+			return fetch(url + path + query, combinedOptions);
+		}).then(function (response) {
+			if (!response.ok) {
+				throw ReferenceError(response.status + " " + response.statusText);
+			}
+
+			return _get(combinedOptions.json) ? response.json() : response;
+		});
 	}
 
-	function _callFetch(_resource, id, query, options) {
-		id = id ? "/" + encodeURI(_trimSlashes(id)) : "";
-		query = query ? "?" + _queryString2.default.stringify(query) : "";
+	function _expectEven(array) {
+		array = _get(array);
 
-		return fetch(_resource.url + id + query, _extends({}, _resource.endpoint.options, _resource.options, options));
+		if (array instanceof Array && array.length % 2 !== 0) {
+			throw new RangeError("Expected even array");
+		}
+
+		return array;
 	}
 
-	function browse(_resource, query, options) {
-		return _callFetch(_resource, null, query, _extends({ method: "GET" }, options));
+	function _expectOdd(array) {
+		array = _get(array);
+
+		if (array instanceof Array && array.length % 2 !== 1) {
+			throw new RangeError("Expected odd array");
+		}
+
+		return array;
 	}
 
-	function read(_resource, id, query, options) {
-		return _callFetch(_resource, id, query, _extends({ method: "GET" }, options));
+	function browse(_endpoint, path) {
+		var query = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+		var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+		return _callFetch(_endpoint, function () {
+			return _expectOdd(path);
+		}, query, _extends({ method: "GET" }, options));
 	}
 
-	function edit(_resource, id, query, options) {
-		return _callFetch(_resource, id, query, _extends({ method: "PATCH" }, options));
+	function read(_endpoint, path) {
+		var query = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+		var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+		return _callFetch(_endpoint, function () {
+			return _expectEven(path);
+		}, query, _extends({ method: "GET" }, options));
 	}
 
-	function replace(_resource, id, query, options) {
-		return _callFetch(_resource, id, query, _extends({ method: "PUT" }, options));
+	function edit(_endpoint, path) {
+		var query = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+		var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+		return _callFetch(_endpoint, function () {
+			return _expectEven(path);
+		}, query, _extends({ method: "PATCH" }, options));
 	}
 
-	function add(_resource, query, options) {
-		return _callFetch(_resource, null, query, _extends({ method: "POST" }, options));
+	function replace(_endpoint, path) {
+		var query = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+		var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+		return _callFetch(_endpoint, function () {
+			return _expectEven(path);
+		}, query, _extends({ method: "PUT" }, options));
 	}
 
-	function destroy(_resource, id, query, options) {
-		return _callFetch(_resource, id, query, _extends({ method: "DELETE" }, options));
+	function add(_endpoint, path) {
+		var query = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+		var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+		return _callFetch(_endpoint, function () {
+			return _expectOdd(path);
+		}, query, _extends({ method: "POST" }, options));
+	}
+
+	function destroy(_endpoint, path) {
+		var query = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+		var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+		return _callFetch(_endpoint, function () {
+			return _expectEven(path);
+		}, query, _extends({ method: "DELETE" }, options));
 	}
 
 	module.exports = {
 		createEndpoint: createEndpoint,
-		createResource: createResource,
 		browse: browse,
 		read: read,
 		edit: edit,

@@ -7,77 +7,128 @@ if (typeof fetch !== "function") {
 	throw new TypeError("Fetch API required but not available");
 }
 
-function _trimSlashes (s) {
-	return s.toString().replace(/(^\/+|\/+$)/g, "");
+function _trimSlashes (string) {
+	return string.toString().replace(/(^\/+|\/+$)/g, "");
 }
 
-function createEndpoint (url, options) {
+function _get (value) {
+	return typeof value === "function" ? value() : value;
+}
+
+function _objectGet (object) {
+	let mapped = {};
+
+	if (typeof object[Symbol.iterator] !== "function") {
+		return object;
+	}
+
+	for (let [key, value] of object) {
+		mapped[key] = typeof value === "object" ? _objectGet(value) : _get(value);
+	}
+
+	return mapped;
+}
+
+function createEndpoint (url, options = {}) {
 	const endpoint = {
 		url,
 		options
 	};
 
-	endpoint.createResource = createResource.bind(null, endpoint);
+	endpoint.browse  = browse.bind(null, endpoint);
+	endpoint.read    = read.bind(null, endpoint);
+	endpoint.edit    = edit.bind(null, endpoint);
+	endpoint.replace = replace.bind(null, endpoint);
+	endpoint.add     = add.bind(null, endpoint);
+	endpoint.destroy = destroy.bind(null, endpoint);
 
 	return endpoint;
 }
 
-function createResource (_endpoint, path, options) {
-	const resource = {
-		path,
-		options,
-		url: _trimSlashes(_endpoint.url) + "/" + _trimSlashes(path),
-		endpoint: _endpoint
-	};
+function _callFetch (endpoint, path, query, options) {
+	let combinedOptions;
 
-	resource.browse  = browse.bind(null, resource);
-	resource.read    = read.bind(null, resource);
-	resource.edit    = edit.bind(null, resource);
-	resource.replace = replace.bind(null, resource);
-	resource.add     = add.bind(null, resource);
-	resource.destroy = destroy.bind(null, resource);
+	return new Promise((resolve, reject) => {
+		const url = _trimSlashes(_get(endpoint.url)) + "/";
 
-	return resource;
-}
+		path = _get(path);
 
-function _callFetch (_resource, id, query, options) {
-	id    = id ? "/" + encodeURI(_trimSlashes(id)) : "";
-	query = query ? "?" + queryString.stringify(query) : "";
+		if (!(path instanceof Array)) {
+			path = [path];
+		}
 
-	return fetch(_resource.url + id + query, {
-		..._resource.endpoint.options,
-		..._resource.options,
-		...options
+		path = path.map(_get).map(_trimSlashes).map(encodeURI).join("/");
+
+		if (typeof query === "object") {
+			query = "?" + encodeURI(queryString.stringify(_objectGet(query)));
+		}
+		else {
+			query = "";
+		}
+
+		combinedOptions = {
+			..._objectGet(endpoint.options),
+			..._objectGet(options)
+		};
+
+		resolve({url, path, query, combinedOptions});
+	}).then(({url, path, query, combinedOptions}) => {
+		return fetch(url + path + query, combinedOptions);
+	}).then((response) => {
+		if (!response.ok) {
+			throw ReferenceError(response.status + " " + response.statusText);
+		}
+
+		return _get(combinedOptions.json) ? response.json() : response;
 	});
 }
 
-function browse (_resource, query, options) {
-	return _callFetch(_resource, null, query, {method: "GET", ...options});
+function _expectEven (array) {
+	array = _get(array);
+
+	if (array instanceof Array && array.length % 2 !== 0) {
+		throw new RangeError("Expected even array");
+	}
+
+	return array;
 }
 
-function read (_resource, id, query, options) {
-	return _callFetch(_resource, id, query, {method: "GET", ...options});
+function _expectOdd (array) {
+	array = _get(array);
+
+	if (array instanceof Array && array.length % 2 !== 1) {
+		throw new RangeError("Expected odd array");
+	}
+
+	return array;
 }
 
-function edit (_resource, id, query, options) {
-	return _callFetch(_resource, id, query, {method: "PATCH", ...options});
+function browse (_endpoint, path, query = {}, options = {}) {
+	return _callFetch(_endpoint, () => _expectOdd(path), query, {method: "GET", ...options});
 }
 
-function replace (_resource, id, query, options) {
-	return _callFetch(_resource, id, query, {method: "PUT", ...options});
+function read (_endpoint, path, query = {}, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "GET", ...options});
 }
 
-function add (_resource, query, options) {
-	return _callFetch(_resource, null, query, {method: "POST", ...options});
+function edit (_endpoint, path, query = {}, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "PATCH", ...options});
 }
 
-function destroy (_resource, id, query, options) {
-	return _callFetch(_resource, id, query, {method: "DELETE", ...options});
+function replace (_endpoint, path, query = {}, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "PUT", ...options});
+}
+
+function add (_endpoint, path, query = {}, options = {}) {
+	return _callFetch(_endpoint, () => _expectOdd(path), query, {method: "POST", ...options});
+}
+
+function destroy (_endpoint, path, query = {}, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "DELETE", ...options});
 }
 
 module.exports = {
 	createEndpoint,
-	createResource,
 	browse,
 	read,
 	edit,

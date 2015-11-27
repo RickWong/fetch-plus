@@ -7,7 +7,7 @@ module.exports = {
 	context: __dirname,
 	devtool: false,
 	entry:   {
-		"example": "./src/example"
+		"example": ["babel-polyfill", "./src/example"]
 	},
 	output:  {
 		path:          path.join(__dirname, "dist"),
