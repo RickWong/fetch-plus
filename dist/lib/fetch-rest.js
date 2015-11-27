@@ -78,29 +78,25 @@ return /******/ (function(modules) { // webpackBootstrap
 		return string.toString().replace(/(^\/+|\/+$)/g, "");
 	}
 
-	function _get(value) {
+	function _compute(value) {
 		return typeof value === "function" ? value() : value;
 	}
 
-	function _objectGet(object) {
+	function _computeObject(object) {
 		var mapped = {};
-
-		if (typeof object[Symbol.iterator] !== "function") {
-			return object;
-		}
 
 		var _iteratorNormalCompletion = true;
 		var _didIteratorError = false;
 		var _iteratorError = undefined;
 
 		try {
-			for (var _iterator = object[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+			for (var _iterator = Object.entries(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 				var _step$value = _slicedToArray(_step.value, 2);
 
 				var key = _step$value[0];
 				var value = _step$value[1];
 
-				mapped[key] = (typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? _objectGet(value) : _get(value);
+				mapped[key] = (typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? _computeObject(value) : _compute(value);
 			}
 		} catch (err) {
 			_didIteratorError = true;
@@ -127,7 +123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		var endpoint = {
 			url: url,
 			options: options,
-			middlewares: middlewares
+			middlewares: {}
 		};
 
 		endpoint.browse = browse.bind(null, endpoint);
@@ -138,47 +134,93 @@ return /******/ (function(modules) { // webpackBootstrap
 		endpoint.destroy = destroy.bind(null, endpoint);
 
 		endpoint.addMiddleware = addMiddleware.bind(null, endpoint);
+		endpoint.removeMiddleware = removeMiddleware.bind(null, endpoint);
+
+		if (middlewares.length) {
+			middlewares.forEach(endpoint.addMiddleware);
+		}
 
 		return endpoint;
 	}
 
+	var middlewareId = 23000;
+
 	function addMiddleware(_endpoint, middleware) {
-		_endpoint.middlewares.push(middleware);
+		if (!middleware._middlewareId) {
+			middleware._middlewareId = middlewareId++;
+		}
+
+		_endpoint.middlewares[middleware._middlewareId] = middleware;
+	}
+
+	function removeMiddleware(_endpoint, middleware) {
+		if (!middleware._middlewareId) {
+			return;
+		}
+
+		if (_endpoint.middlewares[middleware._middlewareId]) {
+			delete _endpoint.middlewares[middleware._middlewareId];
+		}
 	}
 
 	function _callFetch(endpoint, path, query, options) {
 		var afterMiddlewares = [];
 
 		return new Promise(function (resolve, reject) {
-			var url = _trimSlashes(_get(endpoint.url)) + "/";
+			var url = _trimSlashes(_compute(endpoint.url)) + "/";
 
-			path = _get(path);
+			path = _compute(path);
 
 			if (!(path instanceof Array)) {
 				path = [path];
 			}
 
-			path = path.map(_get).map(_trimSlashes).map(encodeURI).join("/");
+			path = path.map(_compute).map(_trimSlashes).map(encodeURI).join("/");
 
 			if ((typeof query === "undefined" ? "undefined" : _typeof(query)) === "object") {
-				query = "?" + encodeURI(_queryString2.default.stringify(_objectGet(query)));
+				query = "?" + encodeURI(_queryString2.default.stringify(_computeObject(query)));
 			} else {
 				query = "";
 			}
 
 			options = _extends({
 				headers: {}
-			}, _objectGet(endpoint.options), _objectGet(options));
+			}, _computeObject(endpoint.options), _computeObject(options));
 
 			resolve({ url: url, path: path, query: query, options: options });
 		}).then(function (request) {
-			endpoint.middlewares.forEach(function (before) {
-				var after = before(request);
+			if (Object.keys(endpoint.middlewares).length) {
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
 
-				if (typeof after === "function") {
-					afterMiddlewares.push(after);
+				try {
+					for (var _iterator2 = Object.entries(endpoint.middlewares)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+						var _step2$value = _slicedToArray(_step2.value, 2);
+
+						var before = _step2$value[1];
+
+						var after = before(request);
+
+						if (typeof after === "function") {
+							afterMiddlewares.push(after);
+						}
+					}
+				} catch (err) {
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion2 && _iterator2.return) {
+							_iterator2.return();
+						}
+					} finally {
+						if (_didIteratorError2) {
+							throw _iteratorError2;
+						}
+					}
 				}
-			});
+			}
 
 			return fetch(request.url + request.path + request.query, request.options);
 		}).then(function (response) {
@@ -203,7 +245,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function _expectEven(array) {
-		array = _get(array);
+		array = _compute(array);
 
 		if (array instanceof Array && array.length % 2 !== 0) {
 			throw new RangeError("Expected even array");
@@ -213,7 +255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function _expectOdd(array) {
-		array = _get(array);
+		array = _compute(array);
 
 		if (array instanceof Array && array.length % 2 !== 1) {
 			throw new RangeError("Expected odd array");
@@ -228,7 +270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		return _callFetch(_endpoint, function () {
 			return _expectOdd(path);
-		}, query, _extends({ method: "GET" }, options));
+		}, query, _extends({ action: "browse", method: "GET" }, options));
 	}
 
 	function read(_endpoint, path) {
@@ -237,7 +279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		return _callFetch(_endpoint, function () {
 			return _expectEven(path);
-		}, query, _extends({ method: "GET" }, options));
+		}, query, _extends({ action: "read", method: "GET" }, options));
 	}
 
 	function edit(_endpoint, path) {
@@ -246,7 +288,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		return _callFetch(_endpoint, function () {
 			return _expectEven(path);
-		}, query, _extends({ method: "PATCH" }, options));
+		}, query, _extends({ action: "edit", method: "PATCH" }, options));
 	}
 
 	function replace(_endpoint, path) {
@@ -255,7 +297,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		return _callFetch(_endpoint, function () {
 			return _expectEven(path);
-		}, query, _extends({ method: "PUT" }, options));
+		}, query, _extends({ action: "replace", method: "PUT" }, options));
 	}
 
 	function add(_endpoint, path) {
@@ -264,7 +306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		return _callFetch(_endpoint, function () {
 			return _expectOdd(path);
-		}, query, _extends({ method: "POST" }, options));
+		}, query, _extends({ action: "add", method: "POST" }, options));
 	}
 
 	function destroy(_endpoint, path) {
@@ -273,12 +315,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		return _callFetch(_endpoint, function () {
 			return _expectEven(path);
-		}, query, _extends({ method: "DELETE" }, options));
+		}, query, _extends({ action: "destroy", method: "DELETE" }, options));
 	}
 
 	module.exports = {
 		createEndpoint: createEndpoint,
 		addMiddleware: addMiddleware,
+		removeMiddleware: removeMiddleware,
 		browse: browse,
 		read: read,
 		edit: edit,

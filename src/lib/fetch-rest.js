@@ -11,19 +11,15 @@ function _trimSlashes (string) {
 	return string.toString().replace(/(^\/+|\/+$)/g, "");
 }
 
-function _get (value) {
+function _compute (value) {
 	return typeof value === "function" ? value() : value;
 }
 
-function _objectGet (object) {
+function _computeObject (object) {
 	let mapped = {};
 
-	if (typeof object[Symbol.iterator] !== "function") {
-		return object;
-	}
-
-	for (let [key, value] of object) {
-		mapped[key] = typeof value === "object" ? _objectGet(value) : _get(value);
+	for (let [key, value] of Object.entries(object)) {
+		mapped[key] = typeof value === "object" ? _computeObject(value) : _compute(value);
 	}
 
 	return mapped;
@@ -33,7 +29,7 @@ function createEndpoint (url, options = {}, middlewares = []) {
 	const endpoint = {
 		url,
 		options,
-		middlewares
+		middlewares: {}
 	};
 
 	endpoint.browse  = browse.bind(null, endpoint);
@@ -43,31 +39,52 @@ function createEndpoint (url, options = {}, middlewares = []) {
 	endpoint.add     = add.bind(null, endpoint);
 	endpoint.destroy = destroy.bind(null, endpoint);
 
-	endpoint.addMiddleware = addMiddleware.bind(null, endpoint);
+	endpoint.addMiddleware    = addMiddleware.bind(null, endpoint);
+	endpoint.removeMiddleware = removeMiddleware.bind(null, endpoint);
+
+	if (middlewares.length) {
+		middlewares.forEach(endpoint.addMiddleware);
+	}
 
 	return endpoint;
 }
 
+let middlewareId = 23000;
+
 function addMiddleware (_endpoint, middleware) {
-	_endpoint.middlewares.push(middleware);
+	if (!middleware._middlewareId) {
+		middleware._middlewareId = middlewareId++;
+	}
+
+	_endpoint.middlewares[middleware._middlewareId] = middleware;
+}
+
+function removeMiddleware (_endpoint, middleware) {
+	if (!middleware._middlewareId) {
+		return;
+	}
+
+	if (_endpoint.middlewares[middleware._middlewareId]) {
+		delete _endpoint.middlewares[middleware._middlewareId];
+	}
 }
 
 function _callFetch (endpoint, path, query, options) {
 	let afterMiddlewares = [];
 
 	return new Promise((resolve, reject) => {
-		const url = _trimSlashes(_get(endpoint.url)) + "/";
+		const url = _trimSlashes(_compute(endpoint.url)) + "/";
 
-		path = _get(path);
+		path = _compute(path);
 
 		if (!(path instanceof Array)) {
 			path = [path];
 		}
 
-		path = path.map(_get).map(_trimSlashes).map(encodeURI).join("/");
+		path = path.map(_compute).map(_trimSlashes).map(encodeURI).join("/");
 
 		if (typeof query === "object") {
-			query = "?" + encodeURI(queryString.stringify(_objectGet(query)));
+			query = "?" + encodeURI(queryString.stringify(_computeObject(query)));
 		}
 		else {
 			query = "";
@@ -75,19 +92,21 @@ function _callFetch (endpoint, path, query, options) {
 
 		options = {
 			headers: {},
-			..._objectGet(endpoint.options),
-			..._objectGet(options)
+			..._computeObject(endpoint.options),
+			..._computeObject(options)
 		};
 
 		resolve({url, path, query, options});
 	}).then((request) => {
-		endpoint.middlewares.forEach((before) => {
-			const after = before(request);
+		if (Object.keys(endpoint.middlewares).length) {
+			for (let [, before] of Object.entries(endpoint.middlewares)) {
+				const after = before(request);
 
-			if (typeof after === "function") {
-				afterMiddlewares.push(after);
+				if (typeof after === "function") {
+					afterMiddlewares.push(after);
+				}
 			}
-		});
+		}
 
 		return fetch(request.url + request.path + request.query, request.options);
 	}).then((response) => {
@@ -110,7 +129,7 @@ function _callFetch (endpoint, path, query, options) {
 }
 
 function _expectEven (array) {
-	array = _get(array);
+	array = _compute(array);
 
 	if (array instanceof Array && array.length % 2 !== 0) {
 		throw new RangeError("Expected even array");
@@ -120,7 +139,7 @@ function _expectEven (array) {
 }
 
 function _expectOdd (array) {
-	array = _get(array);
+	array = _compute(array);
 
 	if (array instanceof Array && array.length % 2 !== 1) {
 		throw new RangeError("Expected odd array");
@@ -130,32 +149,33 @@ function _expectOdd (array) {
 }
 
 function browse (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectOdd(path), query, {method: "GET", ...options});
+	return _callFetch(_endpoint, () => _expectOdd(path), query, {action: "browse", method: "GET", ...options});
 }
 
 function read (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "GET", ...options});
+	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "read", method: "GET", ...options});
 }
 
 function edit (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "PATCH", ...options});
+	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "edit", method: "PATCH", ...options});
 }
 
 function replace (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "PUT", ...options});
+	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "replace", method: "PUT", ...options});
 }
 
 function add (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectOdd(path), query, {method: "POST", ...options});
+	return _callFetch(_endpoint, () => _expectOdd(path), query, {action: "add", method: "POST", ...options});
 }
 
 function destroy (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {method: "DELETE", ...options});
+	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "destroy", method: "DELETE", ...options});
 }
 
 module.exports = {
 	createEndpoint,
 	addMiddleware,
+	removeMiddleware,
 	browse,
 	read,
 	edit,
