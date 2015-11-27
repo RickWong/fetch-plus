@@ -122,10 +122,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function createEndpoint(url) {
 		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+		var middlewares = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
 
 		var endpoint = {
 			url: url,
-			options: options
+			options: options,
+			middlewares: middlewares
 		};
 
 		endpoint.browse = browse.bind(null, endpoint);
@@ -135,11 +137,17 @@ return /******/ (function(modules) { // webpackBootstrap
 		endpoint.add = add.bind(null, endpoint);
 		endpoint.destroy = destroy.bind(null, endpoint);
 
+		endpoint.addMiddleware = addMiddleware.bind(null, endpoint);
+
 		return endpoint;
 	}
 
+	function addMiddleware(_endpoint, middleware) {
+		_endpoint.middlewares.push(middleware);
+	}
+
 	function _callFetch(endpoint, path, query, options) {
-		var combinedOptions = undefined;
+		var afterMiddlewares = [];
 
 		return new Promise(function (resolve, reject) {
 			var url = _trimSlashes(_get(endpoint.url)) + "/";
@@ -158,22 +166,39 @@ return /******/ (function(modules) { // webpackBootstrap
 				query = "";
 			}
 
-			combinedOptions = _extends({}, _objectGet(endpoint.options), _objectGet(options));
+			options = _extends({
+				headers: {}
+			}, _objectGet(endpoint.options), _objectGet(options));
 
-			resolve({ url: url, path: path, query: query, combinedOptions: combinedOptions });
-		}).then(function (_ref) {
-			var url = _ref.url;
-			var path = _ref.path;
-			var query = _ref.query;
-			var combinedOptions = _ref.combinedOptions;
+			resolve({ url: url, path: path, query: query, options: options });
+		}).then(function (request) {
+			endpoint.middlewares.forEach(function (before) {
+				var after = before(request);
 
-			return fetch(url + path + query, combinedOptions);
+				if (typeof after === "function") {
+					afterMiddlewares.push(after);
+				}
+			});
+
+			return fetch(request.url + request.path + request.query, request.options);
 		}).then(function (response) {
 			if (!response.ok) {
-				throw ReferenceError(response.status + " " + response.statusText);
+				throw response;
 			}
 
-			return _get(combinedOptions.json) ? response.json() : response;
+			if (!afterMiddlewares.length) {
+				return response;
+			}
+
+			var promise = Promise.resolve(response).catch(function (error) {
+				throw error;
+			});
+
+			afterMiddlewares.forEach(function (after) {
+				promise = promise.then(after);
+			});
+
+			return promise;
 		});
 	}
 
@@ -253,6 +278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = {
 		createEndpoint: createEndpoint,
+		addMiddleware: addMiddleware,
 		browse: browse,
 		read: read,
 		edit: edit,

@@ -23,17 +23,25 @@ import {createEndpoint} from "fetch-rest";
 
 const jsonApi = createEndpoint(
 	"http://jsonplaceholder.typicode.com",  // API server URL
-	{cache: "no-cache"}                     // Fetch API options
+	{cache: "no-cache"},                    // Fetch API options
+	middlewares                             // Middlewares
+);
+
+jsonApi.addMiddleware(
+	(request) => {                             // Object {url, path, query, options}
+		request.url += ".json";                // Transform request before fetching
+		return (response) => response.json();  // Transform response after fetching
+	}
 );
 
 jsonApi.browse(             // REST action: browse, read, edit, add, destroy, or replace
 	"comments",             // Resource name or array [name, [...id, [...name, [...id]]] et cetera]
 	{postId: 12},           // Query string parameters
-	{json: true}            // Additional Fetch API options
+	{mode: "no-cors"}       // Additional Fetch API options
 ).then(
-	json => console.log(json)
+	(json) => console.log(json)
 ).catch(
-	error => console.warn(error)
+	(error) => console.warn(error)
 );
 ````
 

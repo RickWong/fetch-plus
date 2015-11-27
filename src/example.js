@@ -9,21 +9,25 @@ async function main () {
 		headers: {
 			Authorization: "Bearer hello_world"
 		}
-	});
+	}, [(request) => {
+		request.options.headers["Content-Type"] = "application/json; charset=utf-8";
 
-	await api.browse("posts", {_limit: 1}, {json: true}).then(renderJSON);
+		return (response) => response.json();
+	}]);
 
-	await api.browse("comments", {_limit: 2, postId: 2}, {}).then(renderJSON);
+	await api.browse("posts", {_limit: 1}).then(renderJSON);
 
-	await api.read(["posts", 3], {}, {}).then(renderJSON);
+	await api.browse("comments", {_limit: 2, postId: 2}).then(renderJSON);
 
-	await api.edit(["posts", 4], {}, {body: "body"}).then(renderJSON);
+	await api.read(["posts", 3]).then(renderJSON);
 
-	await api.add("posts", {postId: 5}, {body: "body"}).then(renderJSON);
+	await api.edit(["posts", 4], {}, {body: "[]"}).then(renderJSON);
 
-	await api.replace(["posts", 6], {}, {body: "body"}).then(renderJSON);
+	await api.add("posts", {postId: 5}, {body: "[]"}).then(renderJSON);
 
-	await api.destroy(["posts", 7], {}, {}).then(renderJSON);
+	await api.replace(["posts", 6], {}, {body: "[]"}).then(renderJSON);
+
+	await api.destroy(["posts", 7]).then(renderJSON);
 
 	await api.browse(["posts", 8, "comments"]).then(renderJSON);
 
@@ -35,15 +39,13 @@ async function main () {
 main();
 
 function renderJSON (response) {
-	if (!response.json) {
-		return console.log("Received JSON here:", response);
+	if (!response) {
+		return console.log("Received in console:", response);
 	}
 
-	console.log("Rendered response");
+	console.log("Rendered response to screen");
 
-	return response.json().then(function (json) {
-		const root            = document.getElementById("react-root");
-		root.style.fontFamily = "monospace";
-		root.innerHTML += "" + JSON.stringify(json) + "<br/><br />";
-	});
+	const root            = document.getElementById("react-root");
+	root.style.fontFamily = "monospace";
+	root.innerHTML += "" + JSON.stringify(response) + "<br/><br />";
 }

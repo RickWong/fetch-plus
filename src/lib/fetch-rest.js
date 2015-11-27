@@ -29,10 +29,11 @@ function _objectGet (object) {
 	return mapped;
 }
 
-function createEndpoint (url, options = {}) {
+function createEndpoint (url, options = {}, middlewares = []) {
 	const endpoint = {
 		url,
-		options
+		options,
+		middlewares
 	};
 
 	endpoint.browse  = browse.bind(null, endpoint);
@@ -42,11 +43,17 @@ function createEndpoint (url, options = {}) {
 	endpoint.add     = add.bind(null, endpoint);
 	endpoint.destroy = destroy.bind(null, endpoint);
 
+	endpoint.addMiddleware = addMiddleware.bind(null, endpoint);
+
 	return endpoint;
 }
 
+function addMiddleware (_endpoint, middleware) {
+	_endpoint.middlewares.push(middleware);
+}
+
 function _callFetch (endpoint, path, query, options) {
-	let combinedOptions;
+	let afterMiddlewares = [];
 
 	return new Promise((resolve, reject) => {
 		const url = _trimSlashes(_get(endpoint.url)) + "/";
@@ -66,20 +73,39 @@ function _callFetch (endpoint, path, query, options) {
 			query = "";
 		}
 
-		combinedOptions = {
+		options = {
+			headers: {},
 			..._objectGet(endpoint.options),
 			..._objectGet(options)
 		};
 
-		resolve({url, path, query, combinedOptions});
-	}).then(({url, path, query, combinedOptions}) => {
-		return fetch(url + path + query, combinedOptions);
+		resolve({url, path, query, options});
+	}).then((request) => {
+		endpoint.middlewares.forEach((before) => {
+			const after = before(request);
+
+			if (typeof after === "function") {
+				afterMiddlewares.push(after);
+			}
+		});
+
+		return fetch(request.url + request.path + request.query, request.options);
 	}).then((response) => {
 		if (!response.ok) {
-			throw ReferenceError(response.status + " " + response.statusText);
+			throw response;
 		}
 
-		return _get(combinedOptions.json) ? response.json() : response;
+		if (!afterMiddlewares.length) {
+			return response;
+		}
+
+		let promise = Promise.resolve(response).catch((error) => {throw error;});
+
+		afterMiddlewares.forEach((after) => {
+			promise = promise.then(after);
+		});
+
+		return promise;
 	});
 }
 
@@ -129,6 +155,7 @@ function destroy (_endpoint, path, query = {}, options = {}) {
 
 module.exports = {
 	createEndpoint,
+	addMiddleware,
 	browse,
 	read,
 	edit,
