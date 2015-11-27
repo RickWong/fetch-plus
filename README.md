@@ -8,7 +8,7 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch) with 
 
 - Uses the standard Fetch API.
 - Generic interface to communicate with any REST API.
-- All parameters and options can be functions that will be computed at run-time: `() => value` 
+- Every parameter and option can be functions that will be computed at run-time: `headers: () => value` 
 - Middlewares before fetching to manipute request options.
 - Middlewares after fetching for transforming responses like collections into ImmutableJS records.
 - Runs in Node and browsers but bring your own Fetch API and ES Promise polyfills.
@@ -44,7 +44,7 @@ jsonApi.removeMiddleware(someMiddleware);
 
  // Perform REST action: browse, read, edit, replace, add, or destroy
 jsonApi.browse(            
-	"comments",             // String or array like ["comments", [...id, [..."likes", [...id]]] etc]
+	"comments",             // String or array like ["comments", id, "likes", id] etc
 	{postId: 12},           // Query string parameters
 	{mode: "no-cors"}       // Additional Fetch API options
 ).then(
