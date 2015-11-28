@@ -2,6 +2,7 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 import queryString from "query-string";
+import jsonMiddleware from "./jsonMiddleware";
 
 if (typeof fetch !== "function") {
 	throw new TypeError("Fetch API required but not available");
@@ -18,14 +19,16 @@ function _compute (value) {
 function _computeObject (object) {
 	let mapped = {};
 
-	for (let [key, value] of Object.entries(object)) {
+	Object.keys(object).forEach((key) => {
+		const value = object[key];
+
 		mapped[key] = typeof value === "object" ? _computeObject(value) : _compute(value);
-	}
+	});
 
 	return mapped;
 }
 
-function createEndpoint (url, options = {}, middlewares = []) {
+function connectEndpoint (url, options = {}, middlewares = []) {
 	const endpoint = {
 		url,
 		options,
@@ -98,15 +101,15 @@ function _callFetch (endpoint, path, query, options) {
 
 		resolve({url, path, query, options});
 	}).then((request) => {
-		if (Object.keys(endpoint.middlewares).length) {
-			for (let [, before] of Object.entries(endpoint.middlewares)) {
-				const after = before(request);
 
-				if (typeof after === "function") {
-					afterMiddlewares.push(after);
-				}
+		Object.keys(endpoint.middlewares).forEach((key) => {
+			const before = endpoint.middlewares[key];
+			const after = before(request);
+
+			if (typeof after === "function") {
+				afterMiddlewares.push(after);
 			}
-		}
+		});
 
 		return fetch(request.url + request.path + request.query, request.options);
 	}).then((response) => {
@@ -173,12 +176,13 @@ function destroy (_endpoint, path, query = {}, options = {}) {
 }
 
 module.exports = {
-	createEndpoint,
+	connectEndpoint,
 	addMiddleware,
 	removeMiddleware,
 	browse,
 	read,
 	edit,
 	add,
-	destroy
+	destroy,
+	jsonMiddleware
 };

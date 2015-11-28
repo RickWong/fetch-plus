@@ -1,7 +1,7 @@
 {
   "name": "fetch-rest",
   "description": "Generic REST API client using Fetch API with middleware support",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",

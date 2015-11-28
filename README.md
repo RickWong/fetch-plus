@@ -22,10 +22,10 @@ npm install --save fetch-rest
 ## Usage
 
 ````js
-import {createEndpoint} from "fetch-rest";
+import {connectEndpoint} from "fetch-rest";
 
 // Start by defining an API endpoint.
-const jsonApi = createEndpoint(
+const jsonApi = connectEndpoint(
 	"http://jsonplaceholder.typicode.com",  // API server URL
 	{cache: "no-cache"},                    // Fetch API options
 	middlewares                             // Middlewares

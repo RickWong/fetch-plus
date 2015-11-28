@@ -58,17 +58,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            * @copyright © 2015, Rick Wong. All rights reserved.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            */
-
-	var _queryString = __webpack_require__(1);
+	var _queryString = __webpack_require__(2);
 
 	var _queryString2 = _interopRequireDefault(_queryString);
 
+	var _jsonMiddleware = __webpack_require__(1);
+
+	var _jsonMiddleware2 = _interopRequireDefault(_jsonMiddleware);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; } /**
+	                                                                                                                              * @copyright © 2015, Rick Wong. All rights reserved.
+	                                                                                                                              */
 
 	if (typeof fetch !== "function") {
 		throw new TypeError("Fetch API required but not available");
@@ -85,38 +87,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _computeObject(object) {
 		var mapped = {};
 
-		var _iteratorNormalCompletion = true;
-		var _didIteratorError = false;
-		var _iteratorError = undefined;
+		Object.keys(object).forEach(function (key) {
+			var value = object[key];
 
-		try {
-			for (var _iterator = Object.entries(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-				var _step$value = _slicedToArray(_step.value, 2);
-
-				var key = _step$value[0];
-				var value = _step$value[1];
-
-				mapped[key] = (typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? _computeObject(value) : _compute(value);
-			}
-		} catch (err) {
-			_didIteratorError = true;
-			_iteratorError = err;
-		} finally {
-			try {
-				if (!_iteratorNormalCompletion && _iterator.return) {
-					_iterator.return();
-				}
-			} finally {
-				if (_didIteratorError) {
-					throw _iteratorError;
-				}
-			}
-		}
+			mapped[key] = (typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? _computeObject(value) : _compute(value);
+		});
 
 		return mapped;
 	}
 
-	function createEndpoint(url) {
+	function connectEndpoint(url) {
 		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 		var middlewares = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
 
@@ -189,38 +169,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			resolve({ url: url, path: path, query: query, options: options });
 		}).then(function (request) {
-			if (Object.keys(endpoint.middlewares).length) {
-				var _iteratorNormalCompletion2 = true;
-				var _didIteratorError2 = false;
-				var _iteratorError2 = undefined;
 
-				try {
-					for (var _iterator2 = Object.entries(endpoint.middlewares)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-						var _step2$value = _slicedToArray(_step2.value, 2);
+			Object.keys(endpoint.middlewares).forEach(function (key) {
+				var before = endpoint.middlewares[key];
+				var after = before(request);
 
-						var before = _step2$value[1];
-
-						var after = before(request);
-
-						if (typeof after === "function") {
-							afterMiddlewares.push(after);
-						}
-					}
-				} catch (err) {
-					_didIteratorError2 = true;
-					_iteratorError2 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion2 && _iterator2.return) {
-							_iterator2.return();
-						}
-					} finally {
-						if (_didIteratorError2) {
-							throw _iteratorError2;
-						}
-					}
+				if (typeof after === "function") {
+					afterMiddlewares.push(after);
 				}
-			}
+			});
 
 			return fetch(request.url + request.path + request.query, request.options);
 		}).then(function (response) {
@@ -319,22 +276,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	module.exports = {
-		createEndpoint: createEndpoint,
+		connectEndpoint: connectEndpoint,
 		addMiddleware: addMiddleware,
 		removeMiddleware: removeMiddleware,
 		browse: browse,
 		read: read,
 		edit: edit,
 		add: add,
-		destroy: destroy
+		destroy: destroy,
+		jsonMiddleware: _jsonMiddleware2.default
 	};
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 * @copyright © 2015, Rick Wong. All rights reserved.
+	 */
+
+	var before = exports.before = function before(request) {
+		request.options.headers["Content-Type"] = "application/json; utf-8";
+	};
+
+	var after = exports.after = function after(response) {
+		return response.json();
+	};
+
+	exports.default = function (request) {
+		before(request);
+		return after;
+	};
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var strictUriEncode = __webpack_require__(2);
+	var strictUriEncode = __webpack_require__(3);
 
 	exports.extract = function (str) {
 		return str.split('?')[1] || '';
@@ -402,7 +386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';

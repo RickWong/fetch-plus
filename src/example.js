@@ -1,19 +1,15 @@
 /**
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
-import __fetch from "isomorphic-fetch";
-import {createEndpoint} from "lib/fetch-rest";
+import fetch from "isomorphic-fetch";
+import {connectEndpoint, jsonMiddleware} from "./lib/fetch-rest";
 
 async function main () {
-	const api = createEndpoint("http://jsonplaceholder.typicode.com", {
+	const api = connectEndpoint("http://jsonplaceholder.typicode.com", {
 		headers: {
 			Authorization: "Bearer hello_world"
 		}
-	}, [(request) => {
-		request.options.headers["Content-Type"] = "application/json; charset=utf-8";
-
-		return (response) => response.json();
-	}]);
+	}, [jsonMiddleware]);
 
 	await api.browse("posts", {_limit: 1}).then(renderJSON);
 	await api.browse("comments", {_limit: 2, postId: 2}).then(renderJSON);
