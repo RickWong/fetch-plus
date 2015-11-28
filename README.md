@@ -6,17 +6,22 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch) with 
 
 ## Features
 
-- Uses the standard Fetch API.
-- Generic interface to communicate with any REST API.
-- Every parameter and option can be functions that will be computed at run-time: `headers: () => value` 
-- Middlewares before fetching to manipute request options.
-- Middlewares after fetching for transforming responses like collections into ImmutableJS records.
-- Runs in Node and browsers but bring your own Fetch API and ES Promise polyfills.
+- Simple API like standard Fetch API.
+- Communicate with any REST API.
+- Options can be computed at run-time: `headers: () => value` 
+- Middlewares can manipute request options before fetching.
+- Middlewares can transform responses after fetching, like calling `json()` or parsing into ImmutableJS records.
+- Runs in Node and browsers 
+
+Just remember to bring your own Fetch API and ES Promise polyfills.
 
 ## Installation
 
 ```bash
 npm install --save fetch-rest
+
+# Polyfill if necessary:
+# npm install --save isomorphic-fetch es6-promise
 ```
 
 ## Usage
@@ -24,7 +29,6 @@ npm install --save fetch-rest
 ````js
 import {connectEndpoint} from "fetch-rest";
 
-// Start by defining an API endpoint.
 const jsonApi = connectEndpoint(
 	"http://jsonplaceholder.typicode.com",  // API server URL
 	{cache: "no-cache"},                    // Fetch API options
@@ -33,14 +37,11 @@ const jsonApi = connectEndpoint(
 
 // Enable more middlewares!
 jsonApi.addMiddleware(
-	(request) => {                             // Object {url, path, query, options}
+	(request) => {                             // Writable object {url, path, query, options}
 		request.path += ".json";               // Transform request before fetching
 		return (response) => response.json();  // Transform response after fetching
 	}
 );
-
-// Or disable middlewares. 
-jsonApi.removeMiddleware(someMiddleware);
 
  // Perform REST action: browse, read, edit, replace, add, or destroy
 jsonApi.browse(            
@@ -52,7 +53,12 @@ jsonApi.browse(
 ).catch(
 	(error) => console.warn(error)
 );
+
+// Disable middlewares. 
+jsonApi.removeMiddleware(jsonMiddleware);
 ````
+
+See [example.js](https://github.com/RickWong/fetch-rest/blob/master/src%2Fexample.js) for more.
 
 ## Community
 
