@@ -11,7 +11,7 @@ Generic REST API client using [Fetch API](https://github.com/whatwg/fetch) with 
 - Options can be computed at run-time: `headers: () => value` 
 - Middlewares can manipute request options before fetching.
 - Middlewares can transform responses after fetching, like calling `json()` or parsing into ImmutableJS records.
-- Runs in Node and browsers 
+- Runs in Node and browsers.
 
 Just remember to bring your own Fetch API and ES Promise polyfills.
 
@@ -20,8 +20,8 @@ Just remember to bring your own Fetch API and ES Promise polyfills.
 ```bash
 npm install --save fetch-rest
 
-# Polyfill if necessary:
-# npm install --save isomorphic-fetch es6-promise
+# Polyfill if you haven't already:
+npm install --save isomorphic-fetch es6-promise
 ```
 
 ## Usage
