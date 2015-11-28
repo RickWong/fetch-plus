@@ -10,6 +10,7 @@ export const after = (response) => {
 	return response.json();
 };
 
+// Export using middleware notation.
 export default (request) => {
 	before(request);
 	return after;
