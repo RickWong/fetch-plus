@@ -3,7 +3,7 @@
  */
 
 export const before = (request) => {
-	request.options.headers["Content-Type"] = "application/json; utf-8";
+	request.options.headers["Content-Type"] = "application/json; charset=utf-8";
 };
 
 export const after = (response) => {

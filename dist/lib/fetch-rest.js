@@ -301,12 +301,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var before = exports.before = function before(request) {
-		request.options.headers["Content-Type"] = "application/json; utf-8";
+		request.options.headers["Content-Type"] = "application/json; charset=utf-8";
 	};
 
 	var after = exports.after = function after(response) {
 		return response.json();
 	};
+
+	// Export using middleware notation.
 
 	exports.default = function (request) {
 		before(request);

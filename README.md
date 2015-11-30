@@ -1,13 +1,13 @@
 # fetch-rest
 
-Generic REST API client using [Fetch API](https://github.com/whatwg/fetch) with middleware support.
+Generic REST client using [Fetch API](https://github.com/whatwg/fetch) with middleware support.
 
 ![version](https://img.shields.io/npm/v/fetch-rest.svg) ![license](https://img.shields.io/npm/l/fetch-rest.svg) ![installs](https://img.shields.io/npm/dt/fetch-rest.svg)
 
 ## Features
 
 - Simple API like standard Fetch API.
-- Communicate with any REST API.
+- Communicate with any ReSTful API.
 - Options can be computed at run-time: `headers: () => value` 
 - Middlewares can manipute request options before fetching.
 - Middlewares can transform responses after fetching, like calling `json()` or parsing into ImmutableJS records.
@@ -45,9 +45,9 @@ jsonApi.addMiddleware(
 
  // Perform REST action: browse, read, edit, replace, add, or destroy
 jsonApi.browse(            
-	"comments",             // String or array like ["comments", id, "likes", id] etc
-	{postId: 12},           // Query string parameters
-	{mode: "no-cors"}       // Additional Fetch API options
+	"comments",              // String or Array like ["comments", id, "likes", id] etc
+	() => {postId: 12},      // Query string parameters, can be computed like shown
+	{mode: () => "no-cors"}  // Additional Fetch API options, can be deeply computed like shown
 ).then(
 	(json) => console.log(json)
 ).catch(
