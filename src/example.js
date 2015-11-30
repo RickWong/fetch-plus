@@ -2,7 +2,7 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 import fetch from "isomorphic-fetch";
-import {connectEndpoint, jsonMiddleware} from "./lib/fetch-rest";
+import {connectEndpoint, jsonMiddleware, useragentMiddleware} from "./lib/fetch-rest";
 
 async function main () {
 	const api = connectEndpoint("http://jsonplaceholder.typicode.com", {
@@ -10,6 +10,10 @@ async function main () {
 			Authorization: "Bearer hello_world"
 		}
 	}, [jsonMiddleware]);
+
+	api.addMiddleware(useragentMiddleware({
+		"chrome": "1.0"
+	}));
 
 	await api.browse("posts", {_limit: 1}).then(renderJSON);
 	await api.browse("comments", {_limit: 2, postId: 2}).then(renderJSON);

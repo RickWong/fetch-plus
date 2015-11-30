@@ -3,6 +3,7 @@
  */
 import queryString from "query-string";
 import jsonMiddleware from "./jsonMiddleware";
+import useragentMiddleware from "./useragentMiddleware";
 
 if (typeof fetch !== "function") {
 	throw new TypeError("Fetch API required but not available");
@@ -184,5 +185,6 @@ module.exports = {
 	edit,
 	add,
 	destroy,
-	jsonMiddleware
+	jsonMiddleware,
+	useragentMiddleware
 };

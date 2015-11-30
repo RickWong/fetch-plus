@@ -58,13 +58,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _queryString = __webpack_require__(2);
+	var _queryString = __webpack_require__(3);
 
 	var _queryString2 = _interopRequireDefault(_queryString);
 
 	var _jsonMiddleware = __webpack_require__(1);
 
 	var _jsonMiddleware2 = _interopRequireDefault(_jsonMiddleware);
+
+	var _useragentMiddleware = __webpack_require__(2);
+
+	var _useragentMiddleware2 = _interopRequireDefault(_useragentMiddleware);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -284,7 +288,8 @@ return /******/ (function(modules) { // webpackBootstrap
 		edit: edit,
 		add: add,
 		destroy: destroy,
-		jsonMiddleware: _jsonMiddleware2.default
+		jsonMiddleware: _jsonMiddleware2.default,
+		useragentMiddleware: _useragentMiddleware2.default
 	};
 
 /***/ },
@@ -317,10 +322,37 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 * @copyright © 2015, Rick Wong. All rights reserved.
+	 */
+
+	// Export using middleware notation.
+
+	exports.default = function (userAgents) {
+		return function (request) {
+			if (typeof userAgents !== "string") {
+				userAgents = Object.keys(userAgents).map(function (key) {
+					return [key, userAgents[key]].join("/").replace(/[\t\r\n\s]+/g, "-");
+				}).join(" ");
+			}
+
+			request.options.headers["User-Agent"] = userAgents;
+		};
+	};
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var strictUriEncode = __webpack_require__(3);
+	var strictUriEncode = __webpack_require__(4);
 
 	exports.extract = function (str) {
 		return str.split('?')[1] || '';
@@ -388,7 +420,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
