@@ -58,17 +58,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _queryString = __webpack_require__(3);
+	var _queryString = __webpack_require__(5);
 
 	var _queryString2 = _interopRequireDefault(_queryString);
 
-	var _jsonMiddleware = __webpack_require__(1);
+	var _jsonMiddleware = __webpack_require__(3);
 
 	var _jsonMiddleware2 = _interopRequireDefault(_jsonMiddleware);
 
-	var _useragentMiddleware = __webpack_require__(2);
+	var _useragentMiddleware = __webpack_require__(4);
 
 	var _useragentMiddleware2 = _interopRequireDefault(_useragentMiddleware);
+
+	var _basicauthMiddleware = __webpack_require__(2);
+
+	var _basicauthMiddleware2 = _interopRequireDefault(_basicauthMiddleware);
+
+	var _authMiddleware = __webpack_require__(1);
+
+	var _authMiddleware2 = _interopRequireDefault(_authMiddleware);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -289,11 +297,61 @@ return /******/ (function(modules) { // webpackBootstrap
 		add: add,
 		destroy: destroy,
 		jsonMiddleware: _jsonMiddleware2.default,
-		useragentMiddleware: _useragentMiddleware2.default
+		useragentMiddleware: _useragentMiddleware2.default,
+		basicauthMiddleware: _basicauthMiddleware2.default,
+		authMiddleware: _authMiddleware2.default
 	};
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 * @copyright © 2015, Rick Wong. All rights reserved.
+	 */
+
+	// Export using middleware notation.
+
+	exports.default = function (token) {
+	  return function (request) {
+	    request.options.headers["Authorization"] = "Bearer " + token;
+	  };
+	};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 * @copyright © 2015, Rick Wong. All rights reserved.
+	 */
+
+	// Export using middleware notation.
+
+	exports.default = function (username, password) {
+		var _btoa = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+
+		return function (request) {
+			if (typeof btoa === "undefined" && !_btoa) {
+				throw new TypeError("btoa() function required but not available");
+			}
+
+			request.options.headers["Authorization"] = "Basic " + btoa(username + ":" + password);
+		};
+	};
+
+/***/ },
+/* 3 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -306,6 +364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var before = exports.before = function before(request) {
+		request.options.headers["Accept"] = "application/json";
 		request.options.headers["Content-Type"] = "application/json; charset=utf-8";
 	};
 
@@ -321,7 +380,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 2 */
+/* 4 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -348,11 +407,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var strictUriEncode = __webpack_require__(4);
+	var strictUriEncode = __webpack_require__(6);
 
 	exports.extract = function (str) {
 		return str.split('?')[1] || '';
@@ -420,7 +479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';

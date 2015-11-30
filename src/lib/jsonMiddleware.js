@@ -3,6 +3,7 @@
  */
 
 export const before = (request) => {
+	request.options.headers["Accept"]       = "application/json";
 	request.options.headers["Content-Type"] = "application/json; charset=utf-8";
 };
 
