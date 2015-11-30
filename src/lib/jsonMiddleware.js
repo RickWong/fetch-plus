@@ -11,7 +11,7 @@ export const after = (response) => {
 	return response.json();
 };
 
-// Export using middleware notation.
+// Export using middleware direct notation.
 export default (request) => {
 	before(request);
 	return after;

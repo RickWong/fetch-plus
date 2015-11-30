@@ -315,7 +315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @copyright © 2015, Rick Wong. All rights reserved.
 	 */
 
-	// Export using middleware notation.
+	// Export using middleware creation notation.
 
 	exports.default = function (token) {
 	  return function (request) {
@@ -336,7 +336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @copyright © 2015, Rick Wong. All rights reserved.
 	 */
 
-	// Export using middleware notation.
+	// Export using middleware creation notation.
 
 	exports.default = function (username, password) {
 		var _btoa = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
@@ -372,7 +372,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		return response.json();
 	};
 
-	// Export using middleware notation.
+	// Export using middleware direct notation.
 
 	exports.default = function (request) {
 		before(request);
@@ -392,7 +392,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @copyright © 2015, Rick Wong. All rights reserved.
 	 */
 
-	// Export using middleware notation.
+	// Export using middleware creation notation.
 
 	exports.default = function (userAgents) {
 		return function (request) {

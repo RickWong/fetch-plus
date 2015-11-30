@@ -1,7 +1,7 @@
 {
   "name": "fetch-rest",
   "description": "Generic REST client using Fetch API with middleware support",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
@@ -29,8 +29,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "query-string": "3.0.0",
-    "xml2js": "0.4.15"
+    "query-string": "3.0.0"
   },
   "peerDependencies": {
     "isomorphic-fetch": "2.2.0"
