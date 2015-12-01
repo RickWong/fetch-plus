@@ -1,7 +1,7 @@
 {
   "name": "fetch-rest-bearerauth",
   "description": "Generic REST client using Fetch API with middleware support",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
@@ -22,7 +22,8 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-rest-bearerauth"
+    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-rest-bearerauth",
+    "prepublish": "npm run build"
   },
   "peerDependencies": {
     "fetch-rest": "^3.0.1"
