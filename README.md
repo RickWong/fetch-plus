@@ -58,7 +58,7 @@ jsonApi.browse(
 jsonApi.removeMiddleware(jsonMiddleware);
 ````
 
-See [example.js](https://github.com/RickWong/fetch-rest/blob/master/src%2Fexample.js) for more.
+See [example](https://github.com/RickWong/fetch-rest/blob/master/packages/example/src/index.js) for more.
 
 ## Community
 
