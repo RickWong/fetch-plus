@@ -32,12 +32,12 @@ npm install --save fetch-rest-xml
 import {connectEndpoint} from "fetch-rest";
 
 const jsonApi = connectEndpoint(
-	"http://jsonplaceholder.typicode.com",  // API server URL
-	{cache: "no-cache"},                    // Fetch API options
-	middlewares                             // Middlewares array
+	"http://jsonplaceholder.typicode.com",                  // API server URL
+	{cache: "no-cache"},                                    // Standard Fetch API options
+	[jsonMiddleware, basicauthMiddleware("user", "pass")]   // Middlewares array
 );
 
-// Define a custom middleware with middleware function notation:
+// Easily make your own middleware:
 jsonApi.addMiddleware(
 	(request) => {                             // Writable object {url, path, query, options}
 		request.path += ".json";               // Transform request before fetching
@@ -49,7 +49,7 @@ jsonApi.addMiddleware(
 jsonApi.browse(            
 	"comments",              // String or Array like ["comments", id, "likes", id] etc
 	{
-		() => {postId: 12},      // Query string parameters, can be computed or static
+		query: {postId: 12},     // Query string parameters, can be computed or static
 		mode: () => "no-cors"    // Additional Fetch API options, can be deeply computed or static
 	}  
 ).then(
