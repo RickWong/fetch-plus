@@ -13,15 +13,15 @@ Generic REST client using [Fetch API](https://github.com/whatwg/fetch) with midd
 - Middlewares can transform responses after fetching, like calling `json()` or parsing into ImmutableJS records.
 - Runs in Node and browsers.
 
-Just remember to bring your own Fetch API and ES Promise polyfills.
-
 ## Installation
 
 ```bash
 npm install --save fetch-rest
 
-# Polyfill if you haven't already:
-npm install --save isomorphic-fetch es6-promise
+npm install --save fetch-rest-basicauth
+npm install --save fetch-rest-bearerauth
+npm install --save fetch-rest-json
+npm install --save fetch-rest-useragent
 ```
 
 ## Usage
