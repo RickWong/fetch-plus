@@ -3,7 +3,7 @@
  */
 
 // Export using middleware creation notation.
-export default (username, password, _btoa = null) => (request) => {
+module.exports = (username, password, _btoa = null) => (request) => {
 	if (typeof btoa === "undefined" && !_btoa) {
 		throw new TypeError("btoa() function required but not available");
 	}

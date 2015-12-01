@@ -3,6 +3,6 @@
  */
 
 // Export using middleware creation notation.
-export default (token) => (request) => {
+module.exports = (token) => (request) => {
 	request.options.headers["Authorization"] = "Bearer " + token;
 };

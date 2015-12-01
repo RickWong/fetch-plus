@@ -12,7 +12,7 @@ export const after = (response) => {
 };
 
 // Export using middleware direct notation.
-export default (request) => {
+module.exports = (request) => {
 	before(request);
 	return after;
 };
