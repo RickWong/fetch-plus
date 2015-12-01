@@ -32,10 +32,10 @@ import {connectEndpoint} from "fetch-rest";
 const jsonApi = connectEndpoint(
 	"http://jsonplaceholder.typicode.com",  // API server URL
 	{cache: "no-cache"},                    // Fetch API options
-	middlewares                             // Middlewares
+	middlewares                             // Middlewares array
 );
 
-// Enable more middlewares!
+// Define a custom middleware with middleware function notation:
 jsonApi.addMiddleware(
 	(request) => {                             // Writable object {url, path, query, options}
 		request.path += ".json";               // Transform request before fetching
@@ -46,8 +46,10 @@ jsonApi.addMiddleware(
  // Perform REST action: browse, read, edit, replace, add, or destroy
 jsonApi.browse(            
 	"comments",              // String or Array like ["comments", id, "likes", id] etc
-	() => {postId: 12},      // Query string parameters, can be computed like shown
-	{mode: () => "no-cors"}  // Additional Fetch API options, can be deeply computed like shown
+	{
+		() => {postId: 12},      // Query string parameters, can be computed or static
+		mode: () => "no-cors"    // Additional Fetch API options, can be deeply computed or static
+	}  
 ).then(
 	(json) => console.log(json)
 ).catch(
