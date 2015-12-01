@@ -59,6 +59,8 @@ function addMiddleware (_endpoint, middleware) {
 	}
 
 	_endpoint.middlewares[middleware._middlewareId] = middleware;
+
+	return _endpoint;
 }
 
 function removeMiddleware (_endpoint, middleware) {
@@ -69,6 +71,8 @@ function removeMiddleware (_endpoint, middleware) {
 	if (_endpoint.middlewares[middleware._middlewareId]) {
 		delete _endpoint.middlewares[middleware._middlewareId];
 	}
+
+	return _endpoint;
 }
 
 function _callFetch (endpoint, path, options) {

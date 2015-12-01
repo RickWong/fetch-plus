@@ -7,6 +7,7 @@ import basicauthMiddleware from "fetch-rest-basicauth/src";
 import bearerauthMiddleware from "fetch-rest-bearerauth/src";
 import jsonMiddleware from "fetch-rest-json/src";
 import useragentMiddleware from "fetch-rest-useragent/src";
+import xmlMiddleware from "fetch-rest-xml/src";
 
 async function main () {
 	const api = connectEndpoint("http://jsonplaceholder.typicode.com", {
