@@ -2,7 +2,7 @@
 
 Generic REST client using [Fetch API](https://github.com/whatwg/fetch) with middleware support.
 
-![version](https://img.shields.io/npm/v/fetch-rest.svg) ![license](https://img.shields.io/npm/l/fetch-rest.svg) ![installs](https://img.shields.io/npm/dt/fetch-rest.svg)
+[![version](https://img.shields.io/npm/v/fetch-rest.svg)](https://npmjs.org/package/fetch-rest) ![license](https://img.shields.io/npm/l/fetch-rest.svg) ![installs](https://img.shields.io/npm/dt/fetch-rest.svg)
 
 ## Features
 
