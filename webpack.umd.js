@@ -5,7 +5,6 @@ module.exports = {
 	cache:   false,
 	context: __dirname,
 	output:  {
-		library:       "fetchRest",
 		libraryTarget: "umd"
 	},
 	plugins: [

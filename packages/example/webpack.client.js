@@ -7,7 +7,7 @@ module.exports = {
 	context: __dirname,
 	devtool: false,
 	entry:   {
-		"example": ["babel-polyfill", "./src/example"]
+		"index": ["babel-polyfill", "./src/index"]
 	},
 	output:  {
 		path:          path.join(__dirname, "dist"),
@@ -32,7 +32,8 @@ module.exports = {
 		modulesDirectories: [
 			"src",
 			"node_modules",
-			"web_modules"
+			"web_modules",
+			"packages"
 		],
 		extensions: ["", ".json", ".js"]
 	},

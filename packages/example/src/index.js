@@ -2,7 +2,11 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 import fetch from "isomorphic-fetch";
-import {connectEndpoint, jsonMiddleware, useragentMiddleware, basicauthMiddleware, authMiddleware} from "./lib/fetch-rest";
+import {connectEndpoint} from "fetch-rest/src";
+import basicauthMiddleware from "fetch-rest-basicauth/src";
+import bearerauthMiddleware from "fetch-rest-bearerauth/src";
+import jsonMiddleware from "fetch-rest-json/src";
+import useragentMiddleware from "fetch-rest-useragent/src";
 
 async function main () {
 	const api = connectEndpoint("http://jsonplaceholder.typicode.com", {

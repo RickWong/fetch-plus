@@ -1,0 +1,52 @@
+{
+  "name": "fetch-rest",
+  "description": "Generic REST client using Fetch API with middleware support",
+  "version": "2.2.4",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RickWong/fetch-rest.git"
+  },
+  "homepage": "https://github.com/RickWong/fetch-rest",
+  "keywords": [
+    "fetch",
+    "api",
+    "xhr",
+    "rest",
+    "restful",
+    "middleware",
+    "json",
+    "promise",
+    "observable",
+    "stream"
+  ],
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "concurrent --kill-others 'npm run build-full' 'npm run build-min'",
+    "build-full": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js",
+    "build-min": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js -p ./src/index.js ./dist/index.min.js"
+  },
+  "dependencies": {
+    "query-string": "3.0.0"
+  },
+  "peerDependencies": {
+    "isomorphic-fetch": "2.2.0"
+  },
+  "devDependencies": {
+    "babel": "6.1.18",
+    "babel-core": "6.2.1",
+    "babel-loader": "6.2.0",
+    "babel-polyfill": "6.2.0",
+    "babel-preset-es2015": "6.1.18",
+    "babel-preset-stage-0": "6.1.18",
+    "concurrently": "1.0.0",
+    "json-loader": "0.5.4",
+    "react": "0.14.3",
+    "react-dom": "0.14.3",
+    "webpack": "1.12.9",
+    "webpack-dev-server": "1.14.0"
+  },
+  "engines": {
+    "node": ">=0.10.32"
+  }
+}

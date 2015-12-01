@@ -2,10 +2,6 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 import queryString from "query-string";
-import jsonMiddleware from "./jsonMiddleware";
-import useragentMiddleware from "./useragentMiddleware";
-import basicauthMiddleware from "./basicauthMiddleware";
-import authMiddleware from "./authMiddleware";
 
 if (typeof fetch !== "function") {
 	throw new TypeError("Fetch API required but not available");
@@ -186,9 +182,5 @@ module.exports = {
 	read,
 	edit,
 	add,
-	destroy,
-	jsonMiddleware,
-	useragentMiddleware,
-	basicauthMiddleware,
-	authMiddleware
+	destroy
 };
