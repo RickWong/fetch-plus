@@ -18,6 +18,7 @@ Generic REST client using [Fetch API](https://github.com/whatwg/fetch) with midd
 ```bash
 npm install --save fetch-rest
 
+# Optional middlewares
 npm install --save fetch-rest-basicauth
 npm install --save fetch-rest-bearerauth
 npm install --save fetch-rest-json
