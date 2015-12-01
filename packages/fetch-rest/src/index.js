@@ -71,7 +71,7 @@ function removeMiddleware (_endpoint, middleware) {
 	}
 }
 
-function _callFetch (endpoint, path, query, options) {
+function _callFetch (endpoint, path, options) {
 	let afterMiddlewares = [];
 
 	return new Promise((resolve, reject) => {
@@ -85,22 +85,14 @@ function _callFetch (endpoint, path, query, options) {
 
 		path = path.map(_compute).map(_trimSlashes).map(encodeURI).join("/");
 
-		if (typeof query === "object") {
-			query = "?" + encodeURI(queryString.stringify(_computeObject(query)));
-		}
-		else {
-			query = "";
-		}
-
 		options = {
 			headers: {},
 			..._computeObject(endpoint.options),
 			..._computeObject(options)
 		};
 
-		resolve({url, path, query, options});
+		resolve({url, path, options});
 	}).then((request) => {
-
 		Object.keys(endpoint.middlewares).forEach((key) => {
 			const before = endpoint.middlewares[key];
 			const after = before(request);
@@ -110,7 +102,16 @@ function _callFetch (endpoint, path, query, options) {
 			}
 		});
 
-		return fetch(request.url + request.path + request.query, request.options);
+		let query = request.options.query;
+
+		if (typeof query === "object") {
+			query = "?" + encodeURI(queryString.stringify(_computeObject(query)));
+		}
+		else {
+			query = "";
+		}
+
+		return fetch(request.url + request.path + query, request.options);
 	}).then((response) => {
 		if (!response.ok) {
 			throw response;
@@ -150,28 +151,28 @@ function _expectOdd (array) {
 	return array;
 }
 
-function browse (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectOdd(path), query, {action: "browse", method: "GET", ...options});
+function browse (_endpoint, path, options = {}) {
+	return _callFetch(_endpoint, () => _expectOdd(path), {action: "browse", method: "GET", ...options});
 }
 
-function read (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "read", method: "GET", ...options});
+function read (_endpoint, path, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "read", method: "GET", ...options});
 }
 
-function edit (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "edit", method: "PATCH", ...options});
+function edit (_endpoint, path, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "edit", method: "PATCH", ...options});
 }
 
-function replace (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "replace", method: "PUT", ...options});
+function replace (_endpoint, path, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "replace", method: "PUT", ...options});
 }
 
-function add (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectOdd(path), query, {action: "add", method: "POST", ...options});
+function add (_endpoint, path, options = {}) {
+	return _callFetch(_endpoint, () => _expectOdd(path), {action: "add", method: "POST", ...options});
 }
 
-function destroy (_endpoint, path, query = {}, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), query, {action: "destroy", method: "DELETE", ...options});
+function destroy (_endpoint, path, options = {}) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "destroy", method: "DELETE", ...options});
 }
 
 module.exports = {
