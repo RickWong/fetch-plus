@@ -29,7 +29,7 @@
     "build-fetch-rest-useragent": "cd packages/fetch-rest-useragent && npm run build",
     "build-fetch-rest-xml": "cd packages/fetch-rest-xml && npm run build",
     "watch": "cd packages/example && npm run watch",
-    "publish": "concurrent \"npm run publish-fetch-rest\" \"npm run publish-fetch-rest-basicauth\" \"npm run publish-fetch-rest-bearerauth\" \"npm run publish-fetch-rest-json\" \"npm run publish-fetch-rest-useragent\"",
+    "publish": "concurrent \"npm run publish-fetch-rest\" \"npm run publish-fetch-rest-basicauth\" \"npm run publish-fetch-rest-bearerauth\" \"npm run publish-fetch-rest-json\" \"npm run publish-fetch-rest-useragent\" \"npm run publish-fetch-rest-xml\"",
     "publish-fetch-rest": "cd packages/fetch-rest && npm publish",
     "publish-fetch-rest-basicauth": "cd packages/fetch-rest-basicauth && npm publish",
     "publish-fetch-rest-bearerauth": "cd packages/fetch-rest-bearerauth && npm publish",
