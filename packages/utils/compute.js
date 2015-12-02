@@ -8,6 +8,7 @@ function compute (value) {
 
 function computeObject (object) {
 	let mapped = {};
+	object = compute(object);
 
 	Object.keys(object).forEach((key) => {
 		const value = object[key];

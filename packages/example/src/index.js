@@ -2,6 +2,7 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 import fetch from "isomorphic-fetch";
+import Immutable from "immutable";
 import {connectEndpoint} from "fetch-rest/src";
 import basicauthMiddleware from "fetch-rest-basicauth/src";
 import bearerauthMiddleware from "fetch-rest-bearerauth/src";
@@ -23,8 +24,21 @@ async function main () {
 	}));
 
 	api.addMiddleware(basicauthMiddleware("hello", "world"));
+	api.addMiddleware(immutableMiddleware((key, value, request, response) => {
+		if (Immutable.Iterable.isIndexed(value)) {
+			return value.toList();
+		}
 
-	api.addMiddleware((request) => ({error: (e) => {console.error("Rethrowing: ", e); throw e;}}));
+		if (request.path.match(/(^|\/)posts(\/.+)?$/)) {
+			return new (Immutable.Record({userId: 0, id: 0, title: "", body: ""}))(value);
+		}
+
+		if (request.path.match(/(^|\/)comments(\/.+)$/)) {
+			return new (Immutable.Record({postId: 0, id: 0, name: "", email: "", body: ""}))(value);
+		}
+	}));
+
+	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e); throw e;}}));
 
 	await api.browse("posts", {query:{_limit: 1}}).then(renderJSON);
 	await api.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
