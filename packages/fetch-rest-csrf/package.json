@@ -1,7 +1,7 @@
 {
   "name": "fetch-rest-csrf",
   "description": "Generic REST client using Fetch API with middleware support",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",

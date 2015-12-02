@@ -62,6 +62,7 @@ function removeMiddleware (_endpoint, middleware) {
 
 function _callFetch (endpoint, path, options) {
 	let afterMiddlewares = [];
+	let errorMiddlewares = [];
 
 	return new Promise((resolve, reject) => {
 		const url = _trimSlashes(compute(endpoint.url)) + "/";
@@ -84,20 +85,30 @@ function _callFetch (endpoint, path, options) {
 	}).then((request) => {
 		Object.keys(endpoint.middlewares).forEach((key) => {
 			const before = endpoint.middlewares[key];
-			const after = before(request);
+			const result = before(request);
 
-			if (typeof after === "function") {
-				afterMiddlewares.push(after);
+			if (typeof result === "function") {
+				afterMiddlewares.push(result);
+			}
+			else if (typeof result === "object") {
+				const {after = null, error = null} = result;
+
+				if (typeof after === "function") {
+					afterMiddlewares.push(after);
+				}
+				if (typeof error === "function") {
+					errorMiddlewares.push(error);
+				}
 			}
 		});
 
-		let query = request.options.query;
+		let query = request.options.query || "";
 
 		if (typeof query === "object") {
 			query = "?" + encodeURI(queryString.stringify(computeObject(query)));
 		}
 		else {
-			query = "";
+			query = compute(query);
 		}
 
 		return fetch(request.url + request.path + query, request.options);
@@ -117,6 +128,14 @@ function _callFetch (endpoint, path, options) {
 		});
 
 		return promise;
+	}).catch((error) => {
+		let errorMiddleware = errorMiddlewares.pop();
+
+		if (!errorMiddleware) {
+			throw error;
+		}
+
+		errorMiddleware(error);
 	});
 }
 

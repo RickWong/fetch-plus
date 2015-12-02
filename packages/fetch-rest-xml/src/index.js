@@ -21,5 +21,5 @@ export const after = (response) => {
 // Export using middleware direct notation.
 module.exports = (request) => {
 	before(request);
-	return after;
+	return {after};
 };

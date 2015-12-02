@@ -9,11 +9,13 @@ module.exports = (headerName, currentValue) => (request) => {
 		request.options.headers[headerName] = compute(currentValue);
 	}
 
-	return (response) => {
-		if (response.headers.has(headerName)) {
-			currentValue = response.headers.get(headerName);
-		}
+	return {
+		after: (response) => {
+			if (response.headers.has(headerName)) {
+				currentValue = response.headers.get(headerName);
+			}
 
-		return response;
+			return response;
+		}
 	};
 };

@@ -23,6 +23,8 @@ async function main () {
 
 	api.addMiddleware(basicauthMiddleware("hello", "world"));
 
+	api.addMiddleware((request) => ({error: (e) => {console.error("Rethrowing: ", e); throw e;}}));
+
 	await api.browse("posts", {query:{_limit: 1}}).then(renderJSON);
 	await api.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
 	await api.read(["posts", 3]).then(renderJSON);
@@ -31,8 +33,8 @@ async function main () {
 	await api.replace(["posts", 6], {body: "[]"}).then(renderJSON);
 	await api.destroy(["posts", 7]).then(renderJSON);
 	await api.browse(["posts", 8, "comments"]).then(renderJSON);
-	await api.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // cannot browse single record
-	await api.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.warn(e)); // 404
+	await api.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
+	await api.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
 }
 
 main();

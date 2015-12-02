@@ -1,7 +1,7 @@
 {
   "name": "fetch-rest-useragent",
   "description": "Generic REST client using Fetch API with middleware support",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
