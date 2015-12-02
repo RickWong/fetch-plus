@@ -129,13 +129,23 @@ function _callFetch (endpoint, path, options) {
 
 		return promise;
 	}).catch((error) => {
-		let errorMiddleware = errorMiddlewares.pop();
-
-		if (!errorMiddleware) {
+		if (!errorMiddlewares.length) {
 			throw error;
 		}
 
-		errorMiddleware(error);
+		const caught = errorMiddlewares.some((errorMiddleware) => {
+			try {
+				errorMiddleware(error);
+				return true;
+			}
+			catch (e) {
+				error = e;
+			}
+		});
+
+		if (!caught) {
+			throw error;
+		}
 	});
 }
 
