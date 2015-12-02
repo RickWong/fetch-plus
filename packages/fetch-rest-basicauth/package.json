@@ -1,7 +1,7 @@
 {
   "name": "fetch-rest-basicauth",
   "description": "Generic REST client using Fetch API with middleware support",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",

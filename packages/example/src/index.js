@@ -5,6 +5,7 @@ import fetch from "isomorphic-fetch";
 import {connectEndpoint} from "fetch-rest/src";
 import basicauthMiddleware from "fetch-rest-basicauth/src";
 import bearerauthMiddleware from "fetch-rest-bearerauth/src";
+import csrfMiddleware from "fetch-rest-csrf/src";
 import jsonMiddleware from "fetch-rest-json/src";
 import useragentMiddleware from "fetch-rest-useragent/src";
 import xmlMiddleware from "fetch-rest-xml/src";
@@ -14,7 +15,7 @@ async function main () {
 		headers: {
 			Authorization: "Bearer hello_world"
 		}
-	}, [jsonMiddleware]);
+	}, [csrfMiddleware("X-Csrf-Token", "token"), jsonMiddleware]);
 
 	api.addMiddleware(useragentMiddleware({
 		"chrome": "1.0"

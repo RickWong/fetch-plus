@@ -1,7 +1,7 @@
 {
-  "name": "fetch-rest-useragent",
+  "name": "fetch-rest-csrf",
   "description": "Generic REST client using Fetch API with middleware support",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
@@ -15,14 +15,14 @@
     "rest",
     "restful",
     "middleware",
-    "json",
+    "csrf",
     "promise",
     "observable",
     "stream"
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-rest-useragent",
+    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-rest-csrf",
     "prepublish": "npm run build"
   },
   "peerDependencies": {

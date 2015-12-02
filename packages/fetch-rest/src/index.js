@@ -2,6 +2,7 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 import queryString from "query-string";
+import {compute, computeObject} from "utils/compute";
 
 if (typeof fetch !== "function") {
 	throw new TypeError("Fetch API required but not available");
@@ -9,22 +10,6 @@ if (typeof fetch !== "function") {
 
 function _trimSlashes (string) {
 	return string.toString().replace(/(^\/+|\/+$)/g, "");
-}
-
-function _compute (value) {
-	return typeof value === "function" ? value() : value;
-}
-
-function _computeObject (object) {
-	let mapped = {};
-
-	Object.keys(object).forEach((key) => {
-		const value = object[key];
-
-		mapped[key] = typeof value === "object" ? _computeObject(value) : _compute(value);
-	});
-
-	return mapped;
 }
 
 function connectEndpoint (url, options = {}, middlewares = []) {
@@ -79,20 +64,20 @@ function _callFetch (endpoint, path, options) {
 	let afterMiddlewares = [];
 
 	return new Promise((resolve, reject) => {
-		const url = _trimSlashes(_compute(endpoint.url)) + "/";
+		const url = _trimSlashes(compute(endpoint.url)) + "/";
 
-		path = _compute(path);
+		path = compute(path);
 
 		if (!(path instanceof Array)) {
 			path = [path];
 		}
 
-		path = path.map(_compute).map(_trimSlashes).map(encodeURI).join("/");
+		path = path.map(compute).map(_trimSlashes).map(encodeURI).join("/");
 
 		options = {
 			headers: {},
-			..._computeObject(endpoint.options),
-			..._computeObject(options)
+			...computeObject(endpoint.options),
+			...computeObject(options)
 		};
 
 		resolve({url, path, options});
@@ -109,7 +94,7 @@ function _callFetch (endpoint, path, options) {
 		let query = request.options.query;
 
 		if (typeof query === "object") {
-			query = "?" + encodeURI(queryString.stringify(_computeObject(query)));
+			query = "?" + encodeURI(queryString.stringify(computeObject(query)));
 		}
 		else {
 			query = "";
@@ -136,7 +121,7 @@ function _callFetch (endpoint, path, options) {
 }
 
 function _expectEven (array) {
-	array = _compute(array);
+	array = compute(array);
 
 	if (array instanceof Array && array.length % 2 !== 0) {
 		throw new RangeError("Expected even array");
@@ -146,7 +131,7 @@ function _expectEven (array) {
 }
 
 function _expectOdd (array) {
-	array = _compute(array);
+	array = compute(array);
 
 	if (array instanceof Array && array.length % 2 !== 1) {
 		throw new RangeError("Expected odd array");
@@ -187,5 +172,7 @@ module.exports = {
 	read,
 	edit,
 	add,
-	destroy
+	destroy,
+	compute,
+	computeObject
 };

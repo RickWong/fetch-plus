@@ -25,7 +25,8 @@ module.exports = {
 		modulesDirectories: [
 			"src",
 			"node_modules",
-			"web_modules"
+			"web_modules",
+			"packages"
 		],
 		extensions:         ["", ".json", ".js"]
 	},
