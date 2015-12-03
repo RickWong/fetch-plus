@@ -24,6 +24,7 @@ npm install --save fetch-rest-bearerauth
 npm install --save fetch-rest-csrf
 npm install --save fetch-rest-immutable
 npm install --save fetch-rest-json
+npm install --save fetch-rest-oauth
 npm install --save fetch-rest-useragent
 npm install --save fetch-rest-xml
 ```
