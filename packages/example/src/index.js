@@ -9,6 +9,7 @@ import bearerauthMiddleware from "fetch-rest-bearerauth/src";
 import csrfMiddleware from "fetch-rest-csrf/src";
 import immutableMiddleware from "fetch-rest-immutable/src";
 import jsonMiddleware from "fetch-rest-json/src";
+import oauthMiddleware from "fetch-rest-oauth/src";
 import useragentMiddleware from "fetch-rest-useragent/src";
 import xmlMiddleware from "fetch-rest-xml/src";
 
@@ -17,7 +18,7 @@ async function main () {
 		headers: {
 			Authorization: "Bearer hello_world"
 		}
-	}, [csrfMiddleware("X-Csrf-Token", "token"), jsonMiddleware]);
+	}, [csrfMiddleware("X-Csrf-Token", "token"), jsonMiddleware()]);
 
 	api.addMiddleware(useragentMiddleware({
 		"chrome": "1.0"
