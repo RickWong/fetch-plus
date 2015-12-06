@@ -37,6 +37,8 @@ async function main () {
 		if (request.path.match(/(^|\/)comments(\/.+)$/)) {
 			return new (Immutable.Record({postId: 0, id: 0, name: "", email: "", body: ""}))(value);
 		}
+
+		return value;
 	}));
 
 	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e); throw e;}}));
