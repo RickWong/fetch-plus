@@ -4,10 +4,6 @@
 import queryString from "query-string";
 import {compute, computeObject} from "utils/compute";
 
-if (typeof fetch !== "function") {
-	throw new TypeError("Fetch API required but not available");
-}
-
 function _trimSlashes (string) {
 	return string.toString().replace(/(^\/+|\/+$)/g, "");
 }
@@ -63,6 +59,7 @@ function removeMiddleware (_endpoint, middleware) {
 function _callFetch (endpoint, path, options) {
 	let afterMiddlewares = [];
 	let errorMiddlewares = [];
+	let fetchFunc;
 
 	return new Promise((resolve, reject) => {
 		const url = _trimSlashes(compute(endpoint.url)) + "/";
@@ -75,10 +72,25 @@ function _callFetch (endpoint, path, options) {
 
 		path = path.map(compute).map(_trimSlashes).map(encodeURI).join("/");
 
+		if (typeof options.fetch === "function")
+		{
+			fetchFunc = options.fetch;
+		}
+		else if (typeof endpoint.options.fetch === "function")
+		{
+			fetchFunc = endpoint.options.fetch;
+		}
+		else if (typeof fetch === "function") {
+			fetchFunc = fetch;
+		}
+		else {
+			throw new TypeError("fetch() function not available");
+		}
+
 		options = {
 			headers: {},
-			...computeObject(endpoint.options),
-			...computeObject(options)
+			...computeObject(endpoint.options, ["fetch"]),
+			...computeObject(options, ["fetch"])
 		};
 
 		resolve({url, path, options});
@@ -111,7 +123,7 @@ function _callFetch (endpoint, path, options) {
 			query = compute(query);
 		}
 
-		return fetch(request.url + request.path + query, request.options);
+		return fetchFunc(request.url + request.path + query, request.options);
 	}).then((response) => {
 		if (!response.ok) {
 			throw response;
