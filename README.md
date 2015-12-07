@@ -8,9 +8,10 @@ Generic REST client using [Fetch API](https://github.com/whatwg/fetch) with midd
 
 - Simple API like standard Fetch API.
 - Communicate with any ReSTful API.
-- Options can be computed at run-time: `headers: () => value` 
-- Middlewares can manipute request options before fetching.
-- Middlewares can transform responses after fetching, like calling `json()` or parsing into ImmutableJS records.
+- All options can be computed (at run-time): `headers: () => value`
+- Added "queries" option for building the query string. 
+- Middlewares to manipute requests before fetching.
+- Middlewares to transform responses after fetching, like calling `response.json()` or parsing into ImmutableJS records.
 - Runs in Node and browsers.
 
 ## Installation
