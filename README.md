@@ -10,6 +10,7 @@ Generic REST client using [Fetch API](https://github.com/whatwg/fetch) with midd
 - Communicate with any ReSTful API.
 - All options can be computed (at run-time): `headers: () => value`
 - Added "queries" option for building the query string. 
+- Supports Fetch API Streams draft, with an observable interface to make it nice.
 - Middlewares to manipute requests before fetching.
 - Middlewares to transform responses after fetching, like calling `response.json()` or parsing into ImmutableJS records.
 - Runs in Node and browsers.
@@ -26,6 +27,7 @@ npm install --save fetch-rest-csrf
 npm install --save fetch-rest-immutable
 npm install --save fetch-rest-json
 npm install --save fetch-rest-oauth
+npm install --save fetch-rest-stream
 npm install --save fetch-rest-useragent
 npm install --save fetch-rest-xml
 ```
