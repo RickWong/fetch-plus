@@ -11,8 +11,9 @@ export const after = (response) => {
 	return response.json();
 };
 
-// Export using middleware direct notation.
 module.exports = () => (request) => {
 	before(request);
 	return after;
 };
+
+module.exports.handler = () => after;

@@ -12,13 +12,16 @@ const defaultReviver = (key, value) => {
 	return value.toOrderedMap();
 };
 
-// Export using middleware direct notation.
 module.exports = (reviveRecord) => (request) => (response) => {
-	return Immutable.fromJS(response, (key, value) => {
-		if (reviveRecord) {
-			return reviveRecord(key, value, request, response);
-		}
+	return Immutable.fromJS(
+		response,
+		(key, value) => (reviveRecord ? reviveRecord(key, value, request, response) : defaultReviver(key, value))
+	);
+};
 
-		return defaultReviver(key, value);
-	});
+module.exports.handler = (reviveRecord) => (response) => {
+	return Immutable.fromJS(
+		response,
+		(key, value) => (reviveRecord ? reviveRecord(key, value, undefined, response) : defaultReviver(key, value))
+	);
 };

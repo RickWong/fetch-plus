@@ -12,19 +12,32 @@ import jsonMiddleware from "fetch-rest-json/src";
 import oauthMiddleware from "fetch-rest-oauth/src";
 import useragentMiddleware from "fetch-rest-useragent/src";
 import xmlMiddleware from "fetch-rest-xml/src";
+import streamMiddleware from "fetch-rest-stream/src";
 
 async function main () {
-	const api = connectEndpoint("http://jsonplaceholder.typicode.com", {
-		headers: {
-			Authorization: "Bearer hello_world"
-		}
-	}, [csrfMiddleware("X-Csrf-Token", "token"), jsonMiddleware()]);
+	const api = connectEndpoint("http://jsonplaceholder.typicode.com");
 
-	api.addMiddleware(useragentMiddleware({
-		"chrome": "1.0"
-	}));
-
+	api.addMiddleware(useragentMiddleware({"fetch-rest": "1.0.0"}));
+	api.addMiddleware(csrfMiddleware("X-Csrf-Token", "csrf_token"));
 	api.addMiddleware(basicauthMiddleware("hello", "world"));
+	api.addMiddleware(streamMiddleware({
+		content: "",
+		next (chunk) {
+			console.log("NEXT");
+			this.content += "" + String.fromCharCode.apply(null, chunk.value);
+		},
+		complete (chunk) {
+			console.log("COMPLETE");
+			return {
+				ok: true,
+				json: () => JSON.parse(this.content)
+			};
+		},
+		error (error) {
+			console.log("ERROR");
+		}
+	}));
+	api.addMiddleware(jsonMiddleware());
 	api.addMiddleware(immutableMiddleware((key, value, request, response) => {
 		if (Immutable.Iterable.isIndexed(value)) {
 			return value.toList();
@@ -41,7 +54,7 @@ async function main () {
 		return value;
 	}));
 
-	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e); throw e;}}));
+	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e&&e.stack||e); throw e;}}));
 
 	await api.browse("posts", {query:{_limit: 1}}).then(renderJSON);
 	await api.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
@@ -58,10 +71,6 @@ async function main () {
 main();
 
 function renderJSON (response) {
-	if (!response) {
-		return console.log("Received in console:", response);
-	}
-
 	console.log("Rendered response to screen");
 
 	const root            = document.getElementById("react-root");

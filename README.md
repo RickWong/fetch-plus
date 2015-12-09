@@ -38,7 +38,7 @@ import {connectEndpoint} from "fetch-rest";
 const jsonApi = connectEndpoint(
 	"http://jsonplaceholder.typicode.com",                  // API server URL
 	{cache: "no-cache"},                                    // Standard Fetch API options
-	[jsonMiddleware, basicauthMiddleware("user", "pass")]   // Middlewares array
+	[jsonMiddleware(), basicauthMiddleware("user", "pass")]   // Middlewares array
 );
 
 // Easily make your own middleware:
