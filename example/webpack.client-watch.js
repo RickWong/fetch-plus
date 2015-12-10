@@ -1,5 +1,6 @@
 var webpack = require("webpack");
 var config = require("./webpack.client.js");
+var path = require("path");
 
 config.cache = true;
 config.debug = true;
@@ -18,7 +19,7 @@ config.plugins = [
 
 config.devServer = {
 	publicPath:  "http://localhost:8080/",
-	contentBase: "./dist",
+	contentBase: path.join(__dirname, "dist"),
 	hot:         true,
 	inline:      true,
 	lazy:        false,

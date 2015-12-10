@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "watch": "webpack --verbose --colors --display-error-details --config webpack.client-watch.js && webpack-dev-server --config webpack.client-watch.js"
-  }
-}
