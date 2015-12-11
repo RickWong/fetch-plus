@@ -33,7 +33,8 @@ module.exports = {
 			"src",
 			"node_modules",
 			"web_modules",
-			"packages"
+			"packages",
+			"."
 		],
 		extensions: ["", ".json", ".js"]
 	},
