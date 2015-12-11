@@ -27,8 +27,5 @@
   },
   "peerDependencies": {
     "fetch-rest": "^3.0.1"
-  },
-  "engines": {
-    "node": ">=0.10.32"
   }
 }

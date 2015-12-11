@@ -1,7 +1,7 @@
 {
   "name": "fetch-rest-stream",
   "description": "Fetch API streaming support warpper with ES Observable",
-  "version": "1.0.0",
+  "version": "3.3.1",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
