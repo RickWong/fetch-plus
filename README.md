@@ -6,14 +6,13 @@ Convenient [Fetch API](https://github.com/whatwg/fetch) wrapper with handlers an
 
 ## Features
 
-- Drop-in replacement for Fetch API.
-- Usable with any HTTP endpoint.
-- Especially well-suited for REST JSON APIs.
+- Drop-in replacement for Fetch API. Well, almost.
+- Usable with any HTTP endpoint. Especially suited for REST JSON APIs.
 - All parameters can be computed values: `myHeaders: () => values`
-- A "queries" parameter for building the query string from an object. 
+- Accepts a "queries" object parameter for building safe query strings. 
 - Useful handlers (JSON/Auth/CSRF/Immutable etc) available as separate npm packages.
 - [Fetch API Streams draft](https://github.com/yutakahirano/fetch-with-streams) handler with an Observable interface.
-- Custom middlewares to manipute all requests, all responses, and all errors.
+- Custom middlewares to manipute all requests, responses, and caught errors.
 - Runs in Node and browsers.
 
 ## Installation
@@ -38,35 +37,28 @@ npm install --save fetch-plus-xml
 ````js
 import {connectEndpoint} from "fetch-plus";
 
-const jsonApi = connectEndpoint(
-	"http://jsonplaceholder.typicode.com",                  // API server URL
-	{cache: "no-cache"},                                    // Standard Fetch API options
-	[jsonMiddleware(), basicauthMiddleware("user", "pass")]   // Middlewares array
-);
+const someApi = connectEndpoint("http://some.api.example/v1");
 
-// Easily make your own middleware:
-jsonApi.addMiddleware(
-	(request) => {                             // Writable object {url, path, query, options}
-		request.path += ".json";               // Transform request before fetching
-		return (response) => response.json();  // Transform response after fetching
+// Easily make your own JSON middleware:
+someApi.addMiddleware(
+	(request) => {
+		request.path += ".json";
+		request.options.headers["Content-Type"] = "application/json; charset=utf-8";
+		
+		return (response) => response.json();  // Call json() in all responses.
 	}
 );
 
- // Perform REST action: browse, read, edit, replace, add, or destroy
-jsonApi.browse(            
-	"comments",              // String or Array like ["comments", id, "likes", id] etc
+someApi.browse(            
+	["comments"],                // String or Array like ["comments", id, "likes", id] etc.
 	{
-		query: {postId: 12},     // Query string parameters, can be computed or static
-		mode: () => "no-cors"    // Additional Fetch API options, can be deeply computed or static
+		query: {postId: 12},     // Query string object. So convenient.
 	}  
 ).then(
-	(json) => console.log(json)
+	(json) => console.log(json)  // Receive JSON already because of the above middleware.
 ).catch(
 	(error) => console.warn(error)
 );
-
-// Disable middlewares. 
-jsonApi.removeMiddleware(jsonMiddleware);
 ````
 
 See [example](https://github.com/RickWong/fetch-plus/blob/master/packages/example/src/index.js) for more.
