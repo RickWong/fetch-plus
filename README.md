@@ -1,41 +1,42 @@
-# fetch-rest
+# Fetch+
 
-Generic REST client using [Fetch API](https://github.com/whatwg/fetch) with middleware support.
+Convenient [Fetch API](https://github.com/whatwg/fetch) wrapper with handlers and middleware support.
 
-[![version](https://img.shields.io/npm/v/fetch-rest.svg)](https://npmjs.org/package/fetch-rest) ![license](https://img.shields.io/npm/l/fetch-rest.svg) [![Package Quality](http://npm.packagequality.com/shield/fetch-rest.svg)](http://packagequality.com/#?package=fetch-rest)  ![installs](https://img.shields.io/npm/dt/fetch-rest.svg)
+[![version](https://img.shields.io/npm/v/fetch-plus.svg)](https://npmjs.org/package/fetch-plus) ![license](https://img.shields.io/npm/l/fetch-plus.svg) [![Package Quality](http://npm.packagequality.com/shield/fetch-plus.svg)](http://packagequality.com/#?package=fetch-plus)  ![installs](https://img.shields.io/npm/dt/fetch-plus.svg)
 
 ## Features
 
-- Simple API like standard Fetch API.
-- Communicate with any ReSTful API.
-- All options can be computed (at run-time): `headers: () => value`
-- Added "queries" option for building the query string. 
-- Supports Fetch API Streams draft, with an observable interface to make it nice.
-- Middlewares to manipute requests before fetching.
-- Middlewares to transform responses after fetching, like calling `response.json()` or parsing into ImmutableJS records.
+- Drop-in replacement for Fetch API.
+- Usable with any HTTP endpoint.
+- Especially well-suited for REST JSON APIs.
+- All parameters can be computed values: `myHeaders: () => values`
+- A "queries" parameter for building the query string from an object. 
+- Useful handlers (JSON/Auth/CSRF/Immutable etc) available as separate npm packages.
+- [Fetch API Streams draft](https://github.com/yutakahirano/fetch-with-streams) handler with an Observable interface.
+- Custom middlewares to manipute all requests, all responses, and all errors.
 - Runs in Node and browsers.
 
 ## Installation
 
 ```bash
-npm install --save fetch-rest
+npm install --save fetch-plus
 
-# Optional middlewares
-npm install --save fetch-rest-basicauth
-npm install --save fetch-rest-bearerauth
-npm install --save fetch-rest-csrf
-npm install --save fetch-rest-immutable
-npm install --save fetch-rest-json
-npm install --save fetch-rest-oauth
-npm install --save fetch-rest-stream
-npm install --save fetch-rest-useragent
-npm install --save fetch-rest-xml
+# Available middlewares:
+npm install --save fetch-plus-basicauth
+npm install --save fetch-plus-bearerauth
+npm install --save fetch-plus-csrf
+npm install --save fetch-plus-immutable
+npm install --save fetch-plus-json
+npm install --save fetch-plus-oauth
+npm install --save fetch-plus-stream
+npm install --save fetch-plus-useragent
+npm install --save fetch-plus-xml
 ```
 
 ## Usage
 
 ````js
-import {connectEndpoint} from "fetch-rest";
+import {connectEndpoint} from "fetch-plus";
 
 const jsonApi = connectEndpoint(
 	"http://jsonplaceholder.typicode.com",                  // API server URL
@@ -68,7 +69,7 @@ jsonApi.browse(
 jsonApi.removeMiddleware(jsonMiddleware);
 ````
 
-See [example](https://github.com/RickWong/fetch-rest/blob/master/packages/example/src/index.js) for more.
+See [example](https://github.com/RickWong/fetch-plus/blob/master/packages/example/src/index.js) for more.
 
 ## Community
 

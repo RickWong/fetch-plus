@@ -1,13 +1,13 @@
 {
-  "name": "fetch-rest-immutable",
+  "name": "fetch-plus-json",
   "description": "Generic REST client using Fetch API with middleware support",
   "version": "3.3.1",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RickWong/fetch-rest.git"
+    "url": "https://github.com/RickWong/fetch-plus.git"
   },
-  "homepage": "https://github.com/RickWong/fetch-rest",
+  "homepage": "https://github.com/RickWong/fetch-plus",
   "keywords": [
     "fetch",
     "api",
@@ -15,19 +15,18 @@
     "rest",
     "restful",
     "middleware",
-    "immutable",
+    "json",
     "promise",
     "observable",
     "stream"
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-rest-immutable",
+    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-plus-json",
     "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "fetch-rest": "^3.0.1",
-    "immutable": "^3.7.1"
+    "fetch-plus": "^3.0.1"
   },
   "engines": {
     "node": ">=0.10.32"

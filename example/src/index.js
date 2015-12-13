@@ -3,21 +3,21 @@
  */
 import fetch from "isomorphic-fetch";
 import Immutable from "immutable";
-import {connectEndpoint} from "fetch-rest/src";
-import basicauthMiddleware from "fetch-rest-basicauth/src";
-import bearerauthMiddleware from "fetch-rest-bearerauth/src";
-import csrfMiddleware from "fetch-rest-csrf/src";
-import immutableMiddleware from "fetch-rest-immutable/src";
-import jsonMiddleware from "fetch-rest-json/src";
-import oauthMiddleware from "fetch-rest-oauth/src";
-import useragentMiddleware from "fetch-rest-useragent/src";
-import xmlMiddleware from "fetch-rest-xml/src";
-import streamMiddleware from "fetch-rest-stream/src";
+import {connectEndpoint} from "fetch-plus/src";
+import basicauthMiddleware from "fetch-plus-basicauth/src";
+import bearerauthMiddleware from "fetch-plus-bearerauth/src";
+import csrfMiddleware from "fetch-plus-csrf/src";
+import immutableMiddleware from "fetch-plus-immutable/src";
+import jsonMiddleware from "fetch-plus-json/src";
+import oauthMiddleware from "fetch-plus-oauth/src";
+import useragentMiddleware from "fetch-plus-useragent/src";
+import xmlMiddleware from "fetch-plus-xml/src";
+import streamMiddleware from "fetch-plus-stream/src";
 
 async function main () {
 	const api = connectEndpoint("http://jsonplaceholder.typicode.com");
 
-	api.addMiddleware(useragentMiddleware({"fetch-rest": "1.0.0"}));
+	api.addMiddleware(useragentMiddleware({"fetch-plus": "1.0.0"}));
 	api.addMiddleware(csrfMiddleware("X-Csrf-Token", "csrf_token"));
 	api.addMiddleware(basicauthMiddleware("hello", "world"));
 	api.addMiddleware(streamMiddleware({

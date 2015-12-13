@@ -1,0 +1,35 @@
+{
+  "name": "fetch-plus",
+  "description": "Convenient Fetch API wrapper with handlers and middleware support",
+  "version": "3.3.1",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RickWong/fetch-plus.git"
+  },
+  "homepage": "https://github.com/RickWong/fetch-plus",
+  "keywords": [
+    "fetch",
+    "api",
+    "xhr",
+    "plus",
+    "rest",
+    "restful",
+    "middleware",
+    "json",
+    "promise",
+    "observable",
+    "stream"
+  ],
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-plus",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "query-string": "^3.0.0"
+  },
+  "peerDependencies": {
+    "isomorphic-fetch": "^2.2.0"
+  }
+}

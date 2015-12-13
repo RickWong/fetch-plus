@@ -1,13 +1,13 @@
 {
-  "name": "fetch-rest-stream",
+  "name": "fetch-plus-stream",
   "description": "Fetch API streaming support warpper with ES Observable",
   "version": "3.3.1",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RickWong/fetch-rest.git"
+    "url": "https://github.com/RickWong/fetch-plus.git"
   },
-  "homepage": "https://github.com/RickWong/fetch-rest",
+  "homepage": "https://github.com/RickWong/fetch-plus",
   "keywords": [
     "fetch",
     "api",
@@ -21,7 +21,7 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-rest-stream",
+    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-plus-stream",
     "prepublish": "npm run build"
   }
 }

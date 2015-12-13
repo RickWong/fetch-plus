@@ -4,7 +4,7 @@ var path = require("path");
 
 config.cache = true;
 config.debug = true;
-config.devtool = "eval-sourcemap";
+config.devtool = "cheap-eval-source-map";
 
 config.entry._wds = "webpack-dev-server/client?http://localhost:8080";
 config.entry._hmr = "webpack/hot/only-dev-server";

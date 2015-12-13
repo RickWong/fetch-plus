@@ -1,17 +1,18 @@
 {
-  "name": "fetch-rest",
+  "name": "fetch-plus-bearerauth",
   "description": "Generic REST client using Fetch API with middleware support",
   "version": "3.3.1",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RickWong/fetch-rest.git"
+    "url": "https://github.com/RickWong/fetch-plus.git"
   },
-  "homepage": "https://github.com/RickWong/fetch-rest",
+  "homepage": "https://github.com/RickWong/fetch-plus",
   "keywords": [
     "fetch",
     "api",
     "xhr",
+    "plus",
     "rest",
     "restful",
     "middleware",
@@ -22,13 +23,10 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-rest",
+    "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-plus-bearerauth",
     "prepublish": "npm run build"
   },
-  "dependencies": {
-    "query-string": "^3.0.0"
-  },
   "peerDependencies": {
-    "isomorphic-fetch": "^2.2.0"
+    "fetch-plus": "^3.0.1"
   }
 }
