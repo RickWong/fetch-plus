@@ -1,7 +1,7 @@
 {
   "name": "fetch-plus-immutable",
   "description": "Generic REST client using Fetch API with middleware support",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",

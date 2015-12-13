@@ -1,7 +1,7 @@
 {
   "name": "fetch-plus",
   "description": "Convenient Fetch API wrapper with handlers and middleware support",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
