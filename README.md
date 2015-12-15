@@ -1,26 +1,29 @@
 # Fetch+
 
-Convenient [Fetch API](https://github.com/whatwg/fetch) wrapper with handlers and middleware support.
+A convenient [Fetch API](https://github.com/whatwg/fetch) library with first-class middleware support.
 
 [![version](https://img.shields.io/npm/v/fetch-plus.svg)](https://npmjs.org/package/fetch-plus) ![license](https://img.shields.io/npm/l/fetch-plus.svg) [![Package Quality](http://npm.packagequality.com/shield/fetch-plus.svg)](http://packagequality.com/#?package=fetch-plus)  ![installs](https://img.shields.io/npm/dt/fetch-plus.svg)
 
 ## Features
 
-- Drop-in replacement for Fetch API. Well, almost.
-- Usable with any HTTP endpoint. Especially suited for REST JSON APIs.
-- All parameters can be computed values: `myHeaders: () => values`
-- Accepts a "queries" object parameter for building safe query strings. 
-- Useful handlers (JSON/Auth/CSRF/Immutable etc) available as separate npm packages.
-- [Fetch API Streams draft](https://github.com/yutakahirano/fetch-with-streams) handler with an Observable interface.
+- Drop-in replacement for fetch().
+- Simple BREAD API for consuming REST APIs.
+- Accepts a "queries" option for building safe query strings. 
+- All options can be computed values: `myHeaders: () => values`
 - Custom middlewares to manipute all requests, responses, and caught errors.
-- Runs in Node and browsers.
+- Useful middlewares and handlers (JSON/Auth/CSRF/Immutable etc) available as separate npm packages.
+- [Fetch API Streams draft](https://github.com/yutakahirano/fetch-with-streams) handler with an Observable interface.
+- Runs in Node and all browsers.
 
 ## Installation
 
 ```bash
 npm install --save fetch-plus
+```
 
-# Available middlewares:
+## Additional middlewares
+
+```bash
 npm install --save fetch-plus-basicauth
 npm install --save fetch-plus-bearerauth
 npm install --save fetch-plus-csrf
@@ -34,32 +37,60 @@ npm install --save fetch-plus-xml
 
 ## Usage
 
-````js
-import {connectEndpoint} from "fetch-plus";
+**import/require**
 
+```js
+import {fetch, connectEndpoint} from "fetch-plus";
+```
+
+**fetch**
+
+```js
+fetch("http://some.api.example/v1", {
+	query: {foo: "bar"},                // Query string object. So convenient. 
+	body: () => "R2-D2"                 // Computed values are computed.
+});
+```
+
+**connectEndpoint**
+
+```js
 const someApi = connectEndpoint("http://some.api.example/v1");
+```
 
-// Easily make your own JSON middleware:
+**addMiddleware**
+
+Middlewares look like: `(request) => (response) => response`
+
+```js
 someApi.addMiddleware(
 	(request) => {
 		request.path += ".json";
 		request.options.headers["Content-Type"] = "application/json; charset=utf-8";
 		
-		return (response) => response.json();  // Call json() in all responses.
+		return (response) => response.json();
 	}
 );
+```
 
+**browse, read, edit, add, destroy, replace**
+
+```js
 someApi.browse(            
-	["comments"],                // String or Array like ["comments", id, "likes", id] etc.
-	{
-		query: {postId: 12},     // Query string object. So convenient.
-	}  
-).then(
-	(json) => console.log(json)  // Receive JSON already because of the above middleware.
-).catch(
-	(error) => console.warn(error)
+	["posts"]          // A String or an Array like ["posts", id, "comments"] 
 );
-````
+```
+
+**handlers**
+
+Handlers return functions to pass to .then().
+
+```js
+// Transform JSON with fetch-plus-json.
+import plusJson from "fetch-plus-json";
+
+fetch("http://some.api.example/v1/posts").then(plusJson.handler()); 
+```
 
 See [example](https://github.com/RickWong/fetch-plus/blob/master/packages/example/src/index.js) for more.
 

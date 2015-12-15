@@ -1,6 +1,6 @@
 {
   "name": "fetch-plus-json",
-  "description": "Generic REST client using Fetch API with middleware support",
+  "description": "A convenient Fetch API library with first-class middleware support",
   "version": "3.4.0",
   "license": "BSD-3-Clause",
   "repository": {

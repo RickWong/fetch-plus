@@ -1,6 +1,6 @@
 {
   "name": "fetch-plus",
-  "description": "Convenient Fetch API wrapper with handlers and middleware support",
+  "description": "A convenient Fetch API library with first-class middleware support",
   "version": "3.4.0",
   "license": "BSD-3-Clause",
   "repository": {
