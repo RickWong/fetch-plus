@@ -3,24 +3,35 @@
  */
 import fetch from "isomorphic-fetch";
 import Immutable from "immutable";
-import {connectEndpoint} from "fetch-plus/src";
-import basicauthMiddleware from "fetch-plus-basicauth/src";
-import bearerauthMiddleware from "fetch-plus-bearerauth/src";
-import csrfMiddleware from "fetch-plus-csrf/src";
-import immutableMiddleware from "fetch-plus-immutable/src";
-import jsonMiddleware from "fetch-plus-json/src";
-import oauthMiddleware from "fetch-plus-oauth/src";
-import useragentMiddleware from "fetch-plus-useragent/src";
-import xmlMiddleware from "fetch-plus-xml/src";
-import streamMiddleware from "fetch-plus-stream/src";
+import fetchPlus from "fetch-plus/src";
+import plusBasicAuth from "fetch-plus-basicauth/src";
+import plusBearerAuth from "fetch-plus-bearerauth/src";
+import plusCsrf from "fetch-plus-csrf/src";
+import plusImmutable from "fetch-plus-immutable/src";
+import plusJson from "fetch-plus-json/src";
+import plusOAuth from "fetch-plus-oauth/src";
+import plusUserAgent from "fetch-plus-useragent/src";
+import plusXml from "fetch-plus-xml/src";
+import plusStream from "fetch-plus-stream/src";
 
 async function main () {
-	const api = connectEndpoint("http://jsonplaceholder.typicode.com");
+	// Drop-in replacement for Fetch API.
+	fetchPlus.fetch("http://jsonplaceholder.typicode.com");
 
-	api.addMiddleware(useragentMiddleware({"fetch-plus": "1.0.0"}));
-	api.addMiddleware(csrfMiddleware("X-Csrf-Token", "csrf_token"));
-	api.addMiddleware(basicauthMiddleware("hello", "world"));
-	api.addMiddleware(streamMiddleware({
+	// Create REST endpoint.
+	const api = fetchPlus.connectEndpoint("http://jsonplaceholder.typicode.com");
+
+	// Add User-Agent header constructed with a key-value map.
+	api.addMiddleware(plusUserAgent({"fetch-plus": "1.0.0"}));
+
+	// Add CSRF token that automatically refreshes.
+	api.addMiddleware(plusCsrf("X-Csrf-Token", "csrf_token"));
+
+	// Add Basic Auth username and password.
+	api.addMiddleware(plusBasicAuth("hello", "world"));
+
+	// Add Fetch API Stream subscriber.
+	api.addMiddleware(plusStream({
 		content: "",
 		next (chunk) {
 			console.log("NEXT");
@@ -37,8 +48,12 @@ async function main () {
 			console.log("ERROR");
 		}
 	}));
-	api.addMiddleware(jsonMiddleware());
-	api.addMiddleware(immutableMiddleware((key, value, request, response) => {
+
+	// Add JSON headers and response transformer.
+	api.addMiddleware(plusJson());
+
+	// Add Immutable reviver.
+	api.addMiddleware(plusImmutable((key, value, request, response) => {
 		if (Immutable.Iterable.isIndexed(value)) {
 			return value.toList();
 		}
@@ -54,6 +69,7 @@ async function main () {
 		return value;
 	}));
 
+	// Add custom error handler that prints and rethrows any error.
 	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e&&e.stack||e); throw e;}}));
 
 	await api.browse("posts", {query:{_limit: 1}}).then(renderJSON);

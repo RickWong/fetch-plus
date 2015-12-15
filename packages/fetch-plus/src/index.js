@@ -56,7 +56,7 @@ function removeMiddleware (_endpoint, middleware) {
 	return _endpoint;
 }
 
-function _callFetch (endpoint, path, options) {
+function _callFetch (endpoint, path = "", options = {}) {
 	let afterMiddlewares = [];
 	let errorMiddlewares = [];
 	let fetchFunc;
@@ -89,8 +89,8 @@ function _callFetch (endpoint, path, options) {
 
 		options = {
 			headers: {},
-			...computeObject(endpoint.options, ["fetch"]),
-			...computeObject(options, ["fetch"])
+			...computeObject(endpoint.options),
+			...computeObject(options)
 		};
 
 		resolve({url, path, options});
@@ -205,10 +205,20 @@ function destroy (_endpoint, path, options = {}) {
 	return _callFetch(_endpoint, () => _expectEven(path), {action: "destroy", method: "DELETE", ...options});
 }
 
+function _dropInFetch (url, options = {}) {
+	return _callFetch({
+		url,
+		options,
+		middlewares: {}
+	});
+}
+
+
 module.exports = {
 	connectEndpoint,
 	addMiddleware,
 	removeMiddleware,
+	fetch: _dropInFetch,
 	browse,
 	read,
 	edit,
