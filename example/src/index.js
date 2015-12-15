@@ -1,24 +1,26 @@
 /**
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
-import fetch from "isomorphic-fetch";
-import Immutable from "immutable";
+import fetch     from "isomorphic-fetch";
 import fetchPlus from "fetch-plus/src";
-import plusBasicAuth from "fetch-plus-basicauth/src";
+
+// Middlewares
+import plusBasicAuth  from "fetch-plus-basicauth/src";
 import plusBearerAuth from "fetch-plus-bearerauth/src";
-import plusCsrf from "fetch-plus-csrf/src";
-import plusImmutable from "fetch-plus-immutable/src";
-import plusJson from "fetch-plus-json/src";
-import plusOAuth from "fetch-plus-oauth/src";
-import plusUserAgent from "fetch-plus-useragent/src";
-import plusXml from "fetch-plus-xml/src";
-import plusStream from "fetch-plus-stream/src";
+import plusCsrf       from "fetch-plus-csrf/src";
+import Immutable      from "immutable";
+import plusImmutable  from "fetch-plus-immutable/src";
+import plusJson       from "fetch-plus-json/src";
+import plusOAuth      from "fetch-plus-oauth/src";
+import plusUserAgent  from "fetch-plus-useragent/src";
+import plusXml        from "fetch-plus-xml/src";
+import plusStream     from "fetch-plus-stream/src";
 
 async function main () {
 	// Drop-in replacement for Fetch API.
 	fetchPlus.fetch("http://jsonplaceholder.typicode.com");
 
-	// Create REST endpoint.
+	// Or create REST endpoint.
 	const api = fetchPlus.connectEndpoint("http://jsonplaceholder.typicode.com");
 
 	// Add User-Agent header constructed with a key-value map.
@@ -34,18 +36,16 @@ async function main () {
 	api.addMiddleware(plusStream({
 		content: "",
 		next (chunk) {
-			console.log("NEXT");
 			this.content += "" + String.fromCharCode.apply(null, chunk.value);
 		},
 		complete (chunk) {
-			console.log("COMPLETE");
 			return {
 				ok: true,
 				json: () => JSON.parse(this.content)
 			};
 		},
 		error (error) {
-			console.log("ERROR");
+			console.warn(error);
 		}
 	}));
 
@@ -72,6 +72,7 @@ async function main () {
 	// Add custom error handler that prints and rethrows any error.
 	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e&&e.stack||e); throw e;}}));
 
+	// Perform some BREAD requests.
 	await api.browse("posts", {query:{_limit: 1}}).then(renderJSON);
 	await api.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
 	await api.read(["posts", 3]).then(renderJSON);
