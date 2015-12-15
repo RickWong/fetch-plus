@@ -7,10 +7,10 @@ A convenient [Fetch API](https://github.com/whatwg/fetch) library with first-cla
 ## Features
 
 - Drop-in replacement for fetch().
-- Simple BREAD API for consuming REST APIs.
-- Accepts a "queries" option for building safe query strings. 
+- Simple [BREAD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) methods for consuming REST APIs.
+- A "queries" object option for building safe query strings more easily. 
 - All options can be computed values: `myHeaders: () => values`
-- Custom middlewares to manipute all requests, responses, and caught errors.
+- Custom middlewares to manipute requests, responses, and caught errors.
 - Useful middlewares and handlers (JSON/Auth/CSRF/Immutable etc) available as separate npm packages.
 - [Fetch API Streams draft](https://github.com/yutakahirano/fetch-with-streams) handler with an Observable interface.
 - Runs in Node and all browsers.
@@ -54,7 +54,7 @@ fetch("http://some.api.example/v1", {
 
 **connectEndpoint**
 
-Creates a RESTful client.
+Creates a RESTful client so middlewares can be added to it.
 
 ```js
 const client = connectEndpoint("http://some.api.example/v1");
@@ -96,10 +96,10 @@ Handlers take configuration and return functions to pass to `.then()`.
 // Transform JSON with fetch-plus-json.
 import plusJson from "fetch-plus-json";
 
-fetch("http://some.api.example/v1/posts").then(plusJson.handler({config:"foobar"})); 
+fetch("http://some.api.example/v1/posts").then(plusJson.handler({some:"config"})); 
 ```
 
-See [example](https://github.com/RickWong/fetch-plus/blob/master/packages/example/src/index.js) for more.
+See [example](https://github.com/RickWong/fetch-plus/blob/master/example/src/index.js) for more.
 
 ## Community
 
