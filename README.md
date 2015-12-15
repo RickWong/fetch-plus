@@ -54,16 +54,18 @@ fetch("http://some.api.example/v1", {
 
 **connectEndpoint**
 
+Creates a RESTful client.
+
 ```js
-const someApi = connectEndpoint("http://some.api.example/v1");
+const client = connectEndpoint("http://some.api.example/v1");
 ```
 
-**addMiddleware**
+**client.addMiddleware**
 
-Middlewares look like: `(request) => (response) => response`
+Create middlewares like: `(request) => (response) => response`
 
 ```js
-someApi.addMiddleware(
+client.addMiddleware(
 	(request) => {
 		request.path += ".json";
 		request.options.headers["Content-Type"] = "application/json; charset=utf-8";
@@ -76,20 +78,25 @@ someApi.addMiddleware(
 **browse, read, edit, add, destroy, replace**
 
 ```js
-someApi.browse(            
-	["posts"]          // A String or an Array like ["posts", id, "comments"] 
+client.browse(            
+	"posts"                    // A string...
+);
+
+client.add(
+	["posts", 1, "comments"],  // ...or an array like ["posts", id, "comments"] 
+	{body: "C-3PO"}            // Regular Fetch API body option.
 );
 ```
 
 **handlers**
 
-Handlers return functions to pass to .then().
+Handlers take configuration and return functions to pass to `.then()`.
 
 ```js
 // Transform JSON with fetch-plus-json.
 import plusJson from "fetch-plus-json";
 
-fetch("http://some.api.example/v1/posts").then(plusJson.handler()); 
+fetch("http://some.api.example/v1/posts").then(plusJson.handler({config:"foobar"})); 
 ```
 
 See [example](https://github.com/RickWong/fetch-plus/blob/master/packages/example/src/index.js) for more.
