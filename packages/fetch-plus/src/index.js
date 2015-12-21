@@ -62,7 +62,7 @@ function _callFetch (endpoint, path = "", options = {}, middlewares = []) {
 	let fetchFunc;
 
 	return new Promise((resolve, reject) => {
-		const url = _trimSlashes(compute(endpoint.url)) + "/";
+		const url = _trimSlashes(compute(endpoint.url));
 
 		path = compute(path);
 
@@ -70,7 +70,11 @@ function _callFetch (endpoint, path = "", options = {}, middlewares = []) {
 			path = [path];
 		}
 
-		path = path.map(compute).map(_trimSlashes).map(encodeURI).join("/");
+		path = _trimSlashes(path.map(compute).map(encodeURI).join("/"));
+
+		if (path) {
+			path = "/" + path;
+		}
 
 		if (typeof options.fetch === "function")
 		{
@@ -124,8 +128,8 @@ function _callFetch (endpoint, path = "", options = {}, middlewares = []) {
 		if (typeof query === "object") {
 			query = "?" + encodeURI(queryString.stringify(computeObject(query)));
 		}
-		else {
-			query = compute(query);
+		else if (query !== "") {
+			query = "?" + compute(query);
 		}
 
 		return fetchFunc(request.url + request.path + query, request.options);
