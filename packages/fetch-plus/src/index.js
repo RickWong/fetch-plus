@@ -56,7 +56,7 @@ function removeMiddleware (_endpoint, middleware) {
 	return _endpoint;
 }
 
-function _callFetch (endpoint, path = "", options = {}) {
+function _callFetch (endpoint, path = "", options = {}, middlewares = []) {
 	let afterMiddlewares = [];
 	let errorMiddlewares = [];
 	let fetchFunc;
@@ -95,8 +95,13 @@ function _callFetch (endpoint, path = "", options = {}) {
 
 		resolve({url, path, options});
 	}).then((request) => {
+		let endpointMiddlewares = [];
+
 		Object.keys(endpoint.middlewares).forEach((key) => {
-			const before = endpoint.middlewares[key];
+			endpointMiddlewares.push(endpoint.middlewares[key]);
+		});
+
+		[...endpointMiddlewares, ...middlewares].forEach((before) => {
 			const result = before(request);
 
 			if (typeof result === "function") {
@@ -181,38 +186,37 @@ function _expectOdd (array) {
 	return array;
 }
 
-function browse (_endpoint, path, options = {}) {
-	return _callFetch(_endpoint, () => _expectOdd(path), {action: "browse", method: "GET", ...options});
+function browse (_endpoint, path, options = {}, middlewares = []) {
+	return _callFetch(_endpoint, () => _expectOdd(path), {action: "browse", method: "GET", ...options}, middlewares);
 }
 
-function read (_endpoint, path, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "read", method: "GET", ...options});
+function read (_endpoint, path, options = {}, middlewares = []) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "read", method: "GET", ...options}, middlewares);
 }
 
-function edit (_endpoint, path, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "edit", method: "PATCH", ...options});
+function edit (_endpoint, path, options = {}, middlewares = []) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "edit", method: "PATCH", ...options}, middlewares);
 }
 
-function replace (_endpoint, path, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "replace", method: "PUT", ...options});
+function replace (_endpoint, path, options = {}, middlewares = []) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "replace", method: "PUT", ...options}, middlewares);
 }
 
-function add (_endpoint, path, options = {}) {
-	return _callFetch(_endpoint, () => _expectOdd(path), {action: "add", method: "POST", ...options});
+function add (_endpoint, path, options = {}, middlewares = []) {
+	return _callFetch(_endpoint, () => _expectOdd(path), {action: "add", method: "POST", ...options}, middlewares);
 }
 
-function destroy (_endpoint, path, options = {}) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "destroy", method: "DELETE", ...options});
+function destroy (_endpoint, path, options = {}, middlewares = []) {
+	return _callFetch(_endpoint, () => _expectEven(path), {action: "destroy", method: "DELETE", ...options}, middlewares);
 }
 
-function _dropInFetch (url, options = {}) {
+function _dropInFetch (url, options = {}, middlewares = []) {
 	return _callFetch({
 		url,
 		options,
 		middlewares: {}
-	});
+	}, "", {}, middlewares);
 }
-
 
 module.exports = {
 	connectEndpoint,

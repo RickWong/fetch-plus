@@ -18,7 +18,7 @@ import plusStream     from "fetch-plus-stream/src";
 
 async function main () {
 	// Drop-in replacement for Fetch API.
-	fetchPlus.fetch("http://jsonplaceholder.typicode.com");
+	fetchPlus.fetch("http://jsonplaceholder.typicode.com/posts", {query: {_limit:1}}, [plusJson()]).then(renderJSON);
 
 	// Or create REST endpoint.
 	const api = fetchPlus.connectEndpoint("http://jsonplaceholder.typicode.com");
