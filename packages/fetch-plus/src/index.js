@@ -232,6 +232,9 @@ module.exports = {
 	edit,
 	add,
 	destroy,
+	list: browse,
+	update: edit,
+	create: add,
 	compute,
 	computeObject
 };
