@@ -13,7 +13,12 @@ function computeObject (object) {
 	Object.keys(object).forEach((key) => {
 		const value = object[key];
 
-		mapped[key] = typeof value === "object" ? computeObject(value) : compute(value);
+		if (value === null) {
+			mapped[key] = null;
+		}
+		else {
+			mapped[key] = typeof value === "object" ? computeObject(value) : compute(value);
+		}
 	});
 
 	return mapped;
