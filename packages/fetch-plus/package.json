@@ -28,8 +28,5 @@
   },
   "dependencies": {
     "query-string": "^3.0.0"
-  },
-  "peerDependencies": {
-    "isomorphic-fetch": "^2.2.0"
   }
 }

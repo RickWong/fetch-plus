@@ -18,7 +18,7 @@ A convenient [Fetch API](https://github.com/whatwg/fetch) library with first-cla
 ## Installation
 
 ```bash
-npm install --save fetch-plus
+npm install --save fetch-plus  isomorphic-fetch
 ```
 
 ## Additional middlewares
