@@ -1,28 +1,28 @@
 {
   "dependencies": {
-    "immutable": "3.7.6",
+    "immutable": "^3.7.6",
     "query-string": "^3.0.0",
-    "xml2js": "^0.4.15"
+    "xml2js": "^0.4.16"
   },
   "peerDependencies": {
     "isomorphic-fetch": "^2.2.0"
   },
   "devDependencies": {
-    "babel": "6.3.26",
-    "babel-core": "6.3.26",
-    "babel-loader": "^6.2.0",
-    "babel-polyfill": "^6.3.14",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13",
-    "concurrently": "^1.0.0",
+    "babel": "6.5.2",
+    "babel-core": "6.5.2",
+    "babel-loader": "6.2.3",
+    "babel-polyfill": "6.5.0",
+    "babel-preset-es2015": "6.5.0",
+    "babel-preset-stage-0": "6.5.0",
+    "concurrently": "2.0.0",
     "json-loader": "^0.5.4",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0"
+    "react": "0.14.7",
+    "react-dom": "0.14.7",
+    "webpack": "1.12.14",
+    "webpack-dev-server": "1.14.1"
   },
   "scripts": {
-    "build": "concurrent \"npm run build-fetch-plus\" \"npm run build-fetch-plus-basicauth\" \"npm run build-fetch-plus-bearerauth\" \"npm run build-fetch-plus-csrf\" \"npm run build-fetch-plus-immutable\" \"npm run build-fetch-plus-json\" \"npm run build-fetch-plus-oauth\" \"npm run build-fetch-plus-useragent\" \"npm run build-fetch-plus-xml\" \"npm run build-fetch-plus-stream\"",
+    "build": "concurrently \"npm run build-fetch-plus\" \"npm run build-fetch-plus-basicauth\" \"npm run build-fetch-plus-bearerauth\" \"npm run build-fetch-plus-csrf\" \"npm run build-fetch-plus-immutable\" \"npm run build-fetch-plus-json\" \"npm run build-fetch-plus-oauth\" \"npm run build-fetch-plus-useragent\" \"npm run build-fetch-plus-xml\" \"npm run build-fetch-plus-stream\"",
     "build-fetch-plus": "cd packages/fetch-plus && npm run build",
     "build-fetch-plus-basicauth": "cd packages/fetch-plus-basicauth && npm run build",
     "build-fetch-plus-bearerauth": "cd packages/fetch-plus-bearerauth && npm run build",

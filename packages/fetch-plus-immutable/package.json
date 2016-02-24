@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "fetch-plus": "^3.0.1",
-    "immutable": "^3.7.1"
+    "immutable": "^3.7.6"
   },
   "engines": {
     "node": ">=0.10.32"
