@@ -83,6 +83,10 @@ async function main () {
 	await api.browse(["posts", 8, "comments"]).then(renderJSON);
 	await api.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
 	await api.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
+	
+	// Fetch-like API with configured middlewares and endpoint
+	await api.request("posts/1", {method: "GET"}).then(renderJSON);
+	await api.request("posts/1", {method: "PUT", body: {title: 'foo', body: 'bar', userId: 4}}).then(renderJSON);
 }
 
 main();

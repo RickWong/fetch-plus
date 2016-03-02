@@ -15,6 +15,7 @@ function connectEndpoint (url, options = {}, middlewares = []) {
 		middlewares: {}
 	};
 
+	endpoint.request = request.bind(null, endpoint);
 	endpoint.browse  = browse.bind(null, endpoint);
 	endpoint.read    = read.bind(null, endpoint);
 	endpoint.edit    = edit.bind(null, endpoint);
@@ -190,6 +191,10 @@ function _expectOdd (array) {
 	return array;
 }
 
+function request (_endpoint, path, options = {}, middlewares = []) {
+	return _callFetch(_endpoint, path, {action: "request", ...options}, middlewares);
+}
+
 function browse (_endpoint, path, options = {}, middlewares = []) {
 	return _callFetch(_endpoint, () => _expectOdd(path), {action: "browse", method: "GET", ...options}, middlewares);
 }
@@ -227,6 +232,7 @@ module.exports = {
 	addMiddleware,
 	removeMiddleware,
 	fetch: _dropInFetch,
+	request,
 	browse,
 	read,
 	edit,
