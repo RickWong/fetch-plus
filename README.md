@@ -75,7 +75,20 @@ client.addMiddleware(
 );
 ```
 
-**browse, read, edit, add, destroy, replace**
+**client.request**
+
+`request` performs generic requests to the configured endpoint.
+
+```js
+client.request("posts/25/comments", {
+	method: "POST",
+	body: {comment: "C-3PO"}
+});
+```
+
+**client.browse|read|edit|add|destroy|replace**
+
+BREAD helpers that perform requests to the configured endpoint.
 
 ```js
 client.browse(            
@@ -88,15 +101,20 @@ client.add(
 );
 ```
 
-**request**
+**client.list|create|read|update|destroy**
 
-`request` is a fetch-like API with support for middlewares and a configured endpoint.
+CRUD aliases that perform requests to the configured endpoint.
 
 ```js
-client.request("posts/25/comments", {
-	method: "POST",
-	body: {comment: "C-3PO"}
-});
+client.list(            
+	"posts"                    // A string...
+);
+
+client.create(
+	["posts", 1, "comments"],  // ...or an array like ["posts", id, "comments"] 
+	{body: "C-3PO"}            // Regular Fetch API body option.
+);
+```
 
 **handlers**
 

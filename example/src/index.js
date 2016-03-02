@@ -72,21 +72,22 @@ async function main () {
 	// Add custom error handler that prints and rethrows any error.
 	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e&&e.stack||e); throw e;}}));
 
+	// Perform generic API requests.
+	api.request(["posts", 1], {method: "GET", query: {foo: "bar"}}).then(renderJSON);
+	api.request(["posts", 1], {method: "PUT", body: {title: 'foo', body: 'bar', userId: 4}}).then(renderJSON);
+
 	// Perform some BREAD requests.
-	await api.browse("posts", {query:{_limit: 1}}).then(renderJSON);
-	await api.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
-	await api.read(["posts", 3]).then(renderJSON);
-	await api.edit(["posts", 4], {body: "[]"}).then(renderJSON);
-	await api.add("posts", {query:{postId: 5}, body: "[]"}).then(renderJSON);
-	await api.replace(["posts", 6], {body: "[]"}).then(renderJSON);
-	await api.destroy(["posts", 7]).then(renderJSON);
-	await api.browse(["posts", 8, "comments"]).then(renderJSON);
-	await api.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
-	await api.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
+	api.browse("posts", {query:{_limit: 1}}).then(renderJSON);
+	api.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
+	api.read(["posts", 3]).then(renderJSON);
+	api.edit(["posts", 4], {body: "[]"}).then(renderJSON);
+	api.add("posts", {query:{postId: 5}, body: "[]"}).then(renderJSON);
+	api.replace(["posts", 6], {body: "[]"}).then(renderJSON);
+	api.destroy(["posts", 7]).then(renderJSON);
+	api.browse(["posts", 8, "comments"]).then(renderJSON);
+	api.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
+	api.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
 	
-	// Fetch-like API with configured middlewares and endpoint
-	await api.request("posts/1", {method: "GET"}).then(renderJSON);
-	await api.request("posts/1", {method: "PUT", body: {title: 'foo', body: 'bar', userId: 4}}).then(renderJSON);
 }
 
 main();
