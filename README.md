@@ -88,6 +88,16 @@ client.add(
 );
 ```
 
+**request**
+
+`request` is a fetch-like API with support for middlewares and a configured endpoint.
+
+```js
+client.request("posts/25/comments", {
+	method: "POST",
+	body: {comment: "C-3PO"}
+});
+
 **handlers**
 
 Handlers take configuration and return functions to pass to `.then()`.
