@@ -16,7 +16,7 @@ import plusUserAgent  from "fetch-plus-useragent/src";
 import plusXml        from "fetch-plus-xml/src";
 import plusStream     from "fetch-plus-stream/src";
 
-async function main () {
+function main () {
 	// Drop-in replacement for Fetch API.
 	fetchPlus.fetch("http://jsonplaceholder.typicode.com/posts", {query: "_limit=2"}, [plusJson()]).then(renderJSON);
 
@@ -87,7 +87,6 @@ async function main () {
 	client.browse(["posts", 8, "comments"]).then(renderJSON);
 	client.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
 	client.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
-
 }
 
 main();
