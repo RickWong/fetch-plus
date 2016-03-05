@@ -8,7 +8,7 @@ function _trimSlashes (string) {
 	return string.toString().replace(/(^\/+|\/+$)/g, "");
 }
 
-function connectEndpoint (url, options = {}, middlewares = []) {
+function createClient (url, options = {}, middlewares = []) {
 	const endpoint = {
 		url,
 		options,
@@ -228,7 +228,8 @@ function _dropInFetch (url, options = {}, middlewares = []) {
 }
 
 module.exports = {
-	connectEndpoint,
+	createClient,
+	connectEndpoint: createClient,
 	addMiddleware,
 	removeMiddleware,
 	fetch: _dropInFetch,

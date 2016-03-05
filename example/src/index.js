@@ -20,20 +20,20 @@ async function main () {
 	// Drop-in replacement for Fetch API.
 	fetchPlus.fetch("http://jsonplaceholder.typicode.com/posts", {query: "_limit=2"}, [plusJson()]).then(renderJSON);
 
-	// Or create REST endpoint.
-	const api = fetchPlus.connectEndpoint("http://jsonplaceholder.typicode.com");
+	// Or create REST API client.
+	const client = fetchPlus.createClient("http://jsonplaceholder.typicode.com");
 
 	// Add User-Agent header constructed with a key-value map.
-	api.addMiddleware(plusUserAgent({"fetch-plus": "1.0.0"}));
+	client.addMiddleware(plusUserAgent({"fetch-plus": "1.0.0"}));
 
 	// Add CSRF token that automatically refreshes.
-	api.addMiddleware(plusCsrf("X-Csrf-Token", "csrf_token"));
+	client.addMiddleware(plusCsrf("X-Csrf-Token", "csrf_token"));
 
 	// Add Basic Auth username and password.
-	api.addMiddleware(plusBasicAuth("hello", "world"));
+	client.addMiddleware(plusBasicAuth("hello", "world"));
 
 	// Add Fetch API Stream subscriber.
-	api.addMiddleware(plusStream({
+	client.addMiddleware(plusStream({
 		content: "",
 		next (chunk) {
 			this.content += "" + String.fromCharCode.apply(null, chunk.value);
@@ -50,10 +50,10 @@ async function main () {
 	}));
 
 	// Add JSON headers and response transformer.
-	api.addMiddleware(plusJson());
+	client.addMiddleware(plusJson());
 
 	// Add Immutable reviver.
-	api.addMiddleware(plusImmutable((key, value, request, response) => {
+	client.addMiddleware(plusImmutable((key, value, request, response) => {
 		if (Immutable.Iterable.isIndexed(value)) {
 			return value.toList();
 		}
@@ -70,24 +70,24 @@ async function main () {
 	}));
 
 	// Add custom error handler that prints and rethrows any error.
-	api.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e&&e.stack||e); throw e;}}));
+	client.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e&&e.stack||e); throw e;}}));
 
 	// Perform generic API requests.
-	api.request(["posts", 1], {method: "GET", query: {foo: "bar"}}).then(renderJSON);
-	api.request(["posts", 1], {method: "PUT", body: {title: 'foo', body: 'bar', userId: 4}}).then(renderJSON);
+	client.request(["posts", 1], {method: "GET", query: {foo: "bar"}}).then(renderJSON);
+	client.request(["posts", 1], {method: "PUT", body: {title: 'foo', body: 'bar', userId: 4}}).then(renderJSON);
 
 	// Perform some BREAD requests.
-	api.browse("posts", {query:{_limit: 1}}).then(renderJSON);
-	api.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
-	api.read(["posts", 3]).then(renderJSON);
-	api.edit(["posts", 4], {body: "[]"}).then(renderJSON);
-	api.add("posts", {query:{postId: 5}, body: "[]"}).then(renderJSON);
-	api.replace(["posts", 6], {body: "[]"}).then(renderJSON);
-	api.destroy(["posts", 7]).then(renderJSON);
-	api.browse(["posts", 8, "comments"]).then(renderJSON);
-	api.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
-	api.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
-	
+	client.browse("posts", {query:{_limit: 1}}).then(renderJSON);
+	client.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
+	client.read(["posts", 3]).then(renderJSON);
+	client.edit(["posts", 4], {body: "[]"}).then(renderJSON);
+	client.add("posts", {query:{postId: 5}, body: "[]"}).then(renderJSON);
+	client.replace(["posts", 6], {body: "[]"}).then(renderJSON);
+	client.destroy(["posts", 7]).then(renderJSON);
+	client.browse(["posts", 8, "comments"]).then(renderJSON);
+	client.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
+	client.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
+
 }
 
 main();
