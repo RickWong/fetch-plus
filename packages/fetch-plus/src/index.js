@@ -127,7 +127,7 @@ function _callFetch (endpoint, path = "", options = {}, middlewares = []) {
 		let query = request.options.query || "";
 
 		if (typeof query === "object") {
-			query = "?" + encodeURI(queryString.stringify(computeObject(query)));
+			query = "?" + queryString.stringify(computeObject(query));
 		}
 		else if (query !== "") {
 			query = "?" + compute(query);
