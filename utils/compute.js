@@ -16,6 +16,9 @@ function computeObject (object) {
 		if (value === null) {
 			mapped[key] = null;
 		}
+		else if (typeof FormData === "function" && value instanceof FormData) {
+			mapped[key] = value;
+		}
 		else {
 			mapped[key] = typeof value === "object" ? computeObject(value) : compute(value);
 		}
