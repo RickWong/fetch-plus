@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "immutable": "^3.7.6",
-    "query-string": "^3.0.0",
     "xml2js": "^0.4.16"
   },
   "devDependencies": {
