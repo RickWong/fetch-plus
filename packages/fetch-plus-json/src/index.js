@@ -12,7 +12,15 @@ export const before = (request) => {
 };
 
 export const after = (response) => {
-	return response.json();
+	return new Promise((resolve) => {
+	    response.json().then((body) => {
+	    	Object.defineProperty(response, "body", {
+	      		get: () => body
+	    	});
+		
+			resolve(response);
+	    });	
+	});
 };
 
 module.exports = () => (request) => {
