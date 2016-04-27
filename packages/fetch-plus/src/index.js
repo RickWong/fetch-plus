@@ -195,28 +195,48 @@ function request (_endpoint, path, options = {}, middlewares = []) {
 	return _callFetch(_endpoint, path, {action: "request", ...options}, middlewares);
 }
 
+function get (_endpoint, path, options = {}, middlewares = []) {
+	return request(_endpoint, path, {action: "get", method: "GET", ...options}, middlewares);
+}
+
+function post (_endpoint, path, options = {}, middlewares = []) {
+	return request(_endpoint, path, {action: "post", method: "POST", ...options}, middlewares);
+}
+
+function patch (_endpoint, path, options = {}, middlewares = []) {
+	return request(_endpoint, path, {action: "patch", method: "PATCH", ...options}, middlewares);
+}
+
+function put (_endpoint, path, options = {}, middlewares = []) {
+	return request(_endpoint, path, {action: "put", method: "PUT", ...options}, middlewares);
+}
+
+function del (_endpoint, path, options = {}, middlewares = []) {
+	return request(_endpoint, path, {action: "del", method: "DELETE", ...options}, middlewares);
+}
+
 function browse (_endpoint, path, options = {}, middlewares = []) {
-	return _callFetch(_endpoint, () => _expectOdd(path), {action: "browse", method: "GET", ...options}, middlewares);
+	return get(_endpoint, () => _expectOdd(path), {action: "browse", ...options}, middlewares);
 }
 
 function read (_endpoint, path, options = {}, middlewares = []) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "read", method: "GET", ...options}, middlewares);
+	return get(_endpoint, () => _expectEven(path), {action: "read", ...options}, middlewares);
 }
 
 function edit (_endpoint, path, options = {}, middlewares = []) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "edit", method: "PATCH", ...options}, middlewares);
+	return patch(_endpoint, () => _expectEven(path), {action: "edit", ...options}, middlewares);
 }
 
 function replace (_endpoint, path, options = {}, middlewares = []) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "replace", method: "PUT", ...options}, middlewares);
+	return put(_endpoint, () => _expectEven(path), {action: "replace", ...options}, middlewares);
 }
 
 function add (_endpoint, path, options = {}, middlewares = []) {
-	return _callFetch(_endpoint, () => _expectOdd(path), {action: "add", method: "POST", ...options}, middlewares);
+	return post(_endpoint, () => _expectOdd(path), {action: "add", ...options}, middlewares);
 }
 
 function destroy (_endpoint, path, options = {}, middlewares = []) {
-	return _callFetch(_endpoint, () => _expectEven(path), {action: "destroy", method: "DELETE", ...options}, middlewares);
+	return del(_endpoint, () => _expectEven(path), {action: "destroy", ...options}, middlewares);
 }
 
 function _dropInFetch (url, options = {}, middlewares = []) {
@@ -228,20 +248,31 @@ function _dropInFetch (url, options = {}, middlewares = []) {
 }
 
 module.exports = {
+	// Fetch+ API:
 	createClient,
-	connectEndpoint: createClient,
+	connectEndpoint: createClient, // deprecated
 	addMiddleware,
 	removeMiddleware,
+	// Drop-in replacement:
 	fetch: _dropInFetch,
+	// Generic:
 	request,
+	get,
+	post,
+	patch,
+	put,
+	del,
+	// BREAD:
 	browse,
 	read,
 	edit,
 	add,
 	destroy,
+	// CRUD:
 	list: browse,
 	update: edit,
 	create: add,
+	// Utilities:
 	compute,
 	computeObject
 };

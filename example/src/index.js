@@ -16,7 +16,7 @@ import plusUserAgent  from "fetch-plus-useragent/src";
 import plusXml        from "fetch-plus-xml/src";
 import plusStream     from "fetch-plus-stream/src";
 
-function main () {
+async function main () {
 	// Drop-in replacement for Fetch API.
 	fetchPlus.fetch("http://jsonplaceholder.typicode.com/posts", {query: "_limit=2"}, [plusJson()]).then(renderJSON);
 
@@ -73,20 +73,20 @@ function main () {
 	client.addMiddleware((request) => ({error: (e) => {console.warn("Rethrowing: ", e&&e.stack||e); throw e;}}));
 
 	// Perform generic API requests.
-	client.request(["posts", 1], {method: "GET", query: {foo: "bar"}}).then(renderJSON);
-	client.request(["posts", 1], {method: "PUT", body: {title: 'foo', body: 'bar', userId: 4}}).then(renderJSON);
+	await client.request(["posts", 1], {method: "GET", query: {foo: "bar"}}).then(renderJSON);
+	await client.request(["posts", 1], {method: "PUT", body: {title: 'foo', body: 'bar', userId: 4}}).then(renderJSON);
 
 	// Perform some BREAD requests.
-	client.browse("posts", {query:{_limit: 1}}).then(renderJSON);
-	client.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
-	client.read(["posts", 3]).then(renderJSON);
-	client.edit(["posts", 4], {body: "[]"}).then(renderJSON);
-	client.add("posts", {query:{postId: 5}, body: "[]"}).then(renderJSON);
-	client.replace(["posts", 6], {body: "[]"}).then(renderJSON);
-	client.destroy(["posts", 7]).then(renderJSON);
-	client.browse(["posts", 8, "comments"]).then(renderJSON);
-	client.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
-	client.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
+	await client.browse("posts", {query:{_limit: 1}}).then(renderJSON);
+	await client.browse("comments", {query:{_limit: 2, postId: 2}}).then(renderJSON);
+	await client.read(["posts", 3]).then(renderJSON);
+	await client.edit(["posts", 4], {body: "[]"}).then(renderJSON);
+	await client.add("posts", {query:{postId: 5}, body: "[]"}).then(renderJSON);
+	await client.replace(["posts", 6], {body: "[]"}).then(renderJSON);
+	await client.destroy(["posts", 7]).then(renderJSON);
+	await client.browse(["posts", 8, "comments"]).then(renderJSON);
+	await client.browse(["posts", 9, "comments", 9]).catch((e) => console.warn(e)); // warning cannot "browse" single record
+	await client.read(["posts", 10, "comments", 10], {query:{_limit: 1}}).catch((e) => console.error(e.status)); // 404
 }
 
 main();
