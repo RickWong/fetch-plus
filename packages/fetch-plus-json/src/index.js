@@ -19,6 +19,18 @@ export const after = (response) => {
 	    	});
 		
 			resolve(response);
+	    }).catch((err) => {
+	    	// JSON parse failed
+	    	// If status is 204, assume there was no data
+	    	if (response.status === 204) {
+	    	 	Object.defineProperty(response, "body", {
+	      			get: () => null
+	    		});
+		
+				return resolve(response);
+	    	}
+	    	
+	    	reject(err);
 	    });	
 	});
 };
