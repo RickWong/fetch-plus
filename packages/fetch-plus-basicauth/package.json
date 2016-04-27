@@ -1,7 +1,7 @@
 {
   "name": "fetch-plus-basicauth",
   "description": "A convenient Fetch API library with first-class middleware support",
-  "version": "3.5.0",
+  "version": "3.9.0",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
