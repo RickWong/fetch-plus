@@ -7,8 +7,9 @@ function compute (value) {
 }
 
 function computeObject (object) {
-	let mapped = {};
 	object = compute(object);
+
+	let mapped = {};
 
 	Object.keys(object).forEach((key) => {
 		const value = object[key];
@@ -19,8 +20,11 @@ function computeObject (object) {
 		else if (typeof FormData === "function" && value instanceof FormData) {
 			mapped[key] = value;
 		}
+		else if (typeof value === "object") {
+			mapped[key] = computeObject(value);
+		}
 		else {
-			mapped[key] = typeof value === "object" ? computeObject(value) : compute(value);
+			mapped[key] = compute(value);
 		}
 	});
 
