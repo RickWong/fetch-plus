@@ -5,13 +5,13 @@ import {computeObject} from "utils/compute";
 
 // Export using middleware creation notation.
 module.exports = (userAgents) => (request) => {
-	userAgents = computeObject(userAgents);
+	let userAgent = computeObject(userAgents);
 
-	if (typeof userAgents !== "string") {
-		userAgents = Object.keys(userAgents).map((key) => {
-			return [key, userAgents[key]].join("/").replace(/[\t\r\n\s]+/g, "-");
+	if (typeof userAgent !== "string") {
+		userAgent = Object.keys(userAgent).map((key) => {
+			return [key, userAgent[key]].join("/").replace(/[\t\r\n\s]+/g, "-");
 		}).join(" ");
 	}
 
-	request.options.headers["User-Agent"] = userAgents;
+	request.options.headers["User-Agent"] = userAgent;
 };
