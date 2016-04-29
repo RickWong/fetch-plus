@@ -11,13 +11,37 @@ export const before = (request) => {
 	}
 };
 
-export const after = (response) => {
-	return response.json();
+export const after = (options = {}) => (response) => {
+	return new Promise((resolve, reject) => {
+		// When requested to return the full response, overwrite
+		// the body property
+		const resolveWith = (value) => {
+			if (options.fullResponse) {
+				Object.defineProperty(response, "body", {
+					get: () => value
+				});
+
+				resolve(response);
+			} else {
+				resolve(value);
+			}
+		};
+
+		response.json().then(resolveWith).catch((err) => {
+			// JSON parse failed
+			// If status is 204, assume there was no data
+			if (response.status === 204) {
+				resolveWith(null);
+			} else {
+				reject(err);
+			}
+		});
+	});
 };
 
-module.exports = () => (request) => {
+module.exports = (options = {}) => (request) => {
 	before(request);
-	return after;
+	return after(options);
 };
 
-module.exports.handler = () => after;
+module.exports.handler = (options = {}) => after(options);
