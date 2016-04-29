@@ -3,15 +3,22 @@
  */
 import {computeObject} from "utils/compute";
 
-// Export using middleware creation notation.
-module.exports = (userAgents) => (request) => {
-	let userAgent = computeObject(userAgents);
-
-	if (typeof userAgent !== "string") {
-		userAgent = Object.keys(userAgent).map((key) => {
-			return [key, userAgent[key]].join("/").replace(/[\t\r\n\s]+/g, "-");
-		}).join(" ");
+const _serialize = (userAgents) => {
+	if (typeof userAgents !== "object") {
+		return userAgents;
 	}
 
-	request.options.headers["User-Agent"] = userAgent;
+	return Object.keys(userAgents).map((key) => {
+		return [key, userAgents[key]].join("/").replace(/[\t\r\n\s]+/g, "-");
+	}).join(" ");
+};
+
+module.exports = (userAgents) => {
+	userAgents = _serialize(userAgents);
+
+	return (request) => {
+		const userAgent = _serialize(computeObject(userAgents));
+
+		request.options.headers["User-Agent"] = userAgent;
+	};
 };

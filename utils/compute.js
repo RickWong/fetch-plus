@@ -2,20 +2,34 @@
  * @copyright © 2015, Rick Wong. All rights reserved.
  */
 
-function compute (value) {
+const _isScalar = (value) => {
+	return (
+		value === undefined ||
+		value === null ||
+		typeof value === "string" ||
+		typeof value === "number" ||
+		typeof value === "boolean"
+	);
+};
+
+const compute = (value) => {
 	return typeof value === "function" ? value() : value;
 }
 
-function computeObject (object) {
+const computeObject = (object) => {
 	object = compute(object);
+
+	if (_isScalar(object)) {
+		return object;
+	}
 
 	let mapped = {};
 
 	Object.keys(object).forEach((key) => {
 		const value = object[key];
 
-		if (value === null) {
-			mapped[key] = null;
+		if (_isScalar(value)) {
+			mapped[key] = value;
 		}
 		else if (typeof FormData === "function" && value instanceof FormData) {
 			mapped[key] = value;

@@ -10,7 +10,9 @@ module.exports = (headerName, currentValue) => (request) => {
 	}
 
 	return (response) => {
-		if (response.headers && response.headers.has && response.headers.has(headerName)) {
+		if (response.headers &&
+			response.headers.has &&
+			response.headers.has(headerName)) {
 			currentValue = response.headers.get(headerName);
 		}
 

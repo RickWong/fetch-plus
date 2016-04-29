@@ -4,11 +4,11 @@
 import queryString from "query-string";
 import {compute, computeObject} from "utils/compute";
 
-function _trimSlashes (string) {
+const _trimSlashes = (string) => {
 	return string.toString().replace(/(^\/+|\/+$)/g, "");
-}
+};
 
-function createClient (url, options = {}, middlewares = []) {
+const createClient = (url, options = {}, middlewares = []) => {
 	const endpoint = {
 		url,
 		options,
@@ -31,7 +31,7 @@ function createClient (url, options = {}, middlewares = []) {
 	}
 
 	return endpoint;
-}
+};
 
 let middlewareId = 23000;
 
@@ -57,7 +57,7 @@ function removeMiddleware (_endpoint, middleware) {
 	return _endpoint;
 }
 
-function _callFetch (endpoint, path = "", options = {}, middlewares = []) {
+const _callFetch = (endpoint, path = "", options = {}, middlewares = []) => {
 	let afterMiddlewares = [];
 	let errorMiddlewares = [];
 	let fetchFunc;
@@ -169,9 +169,9 @@ function _callFetch (endpoint, path = "", options = {}, middlewares = []) {
 			throw error;
 		}
 	});
-}
+};
 
-function _expectEven (array) {
+const _expectEven = (array) => {
 	array = compute(array);
 
 	if (array instanceof Array && array.length % 2 !== 0) {
@@ -181,7 +181,7 @@ function _expectEven (array) {
 	return array;
 }
 
-function _expectOdd (array) {
+const _expectOdd = (array) => {
 	array = compute(array);
 
 	if (array instanceof Array && array.length % 2 !== 1) {
@@ -239,13 +239,13 @@ function destroy (_endpoint, path, options = {}, middlewares = []) {
 	return del(_endpoint, () => _expectEven(path), {action: "destroy", ...options}, middlewares);
 }
 
-function _dropInFetch (url, options = {}, middlewares = []) {
+const _dropInFetch = (url, options = {}, middlewares = []) => {
 	return _callFetch({
 		url,
 		options,
 		middlewares: {}
 	}, "", {}, middlewares);
-}
+};
 
 module.exports = {
 	// Fetch+ API:

@@ -4,8 +4,7 @@
 import {compute} from "utils/compute";
 
 // Export using middleware creation notation.
-module.exports = (username, password, _btoa = null) => (request) => {
-
+module.exports = (username, password, _btoa = null) => {
 	if (!_btoa) {
 		if (typeof btoa === "undefined") {
 			throw new TypeError("btoa() function required but not available");
@@ -14,5 +13,9 @@ module.exports = (username, password, _btoa = null) => (request) => {
 		_btoa = btoa;
 	}
 
-	request.options.headers["Authorization"] = "Basic " + _btoa(compute(username) + ":" + compute(password));
+	return (request) => {
+		const basicAuth = _btoa(compute(username) + ":" + compute(password));
+
+		request.options.headers["Authorization"] = "Basic " + basicAuth;
+	};
 };

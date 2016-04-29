@@ -3,23 +3,22 @@
  */
 import {parseString} from "xml2js";
 
-export const before = (request) => {
-	request.options.headers["Accept"]       = "application/xml";
-	request.options.headers["Content-Type"] = "application/xml; charset=utf-8";
-};
-
-export const after = (response) => {
+const after = (response) => {
 	return new Promise((resolve, reject) => {
 		response.text().then((text) => {
 			parseString(text, (error, result) => {
 				error === null ? resolve(result) : reject(error);
 			});
+		}).catch((error) => {
+			reject(error);
 		});
 	});
 };
 
 module.exports = () => (request) => {
-	before(request);
+	request.options.headers["Accept"]       = "application/xml";
+	request.options.headers["Content-Type"] = "application/xml; charset=utf-8";
+
 	return after;
 };
 
