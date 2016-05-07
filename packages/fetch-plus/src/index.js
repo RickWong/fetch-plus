@@ -16,12 +16,20 @@ const createClient = (url, options = {}, middlewares = []) => {
 	};
 
 	endpoint.request = request.bind(null, endpoint);
+	endpoint.get     = get.bind(null, endpoint);
+	endpoint.post    = post.bind(null, endpoint);
+	endpoint.patch   = patch.bind(null, endpoint);
+	endpoint.put     = put.bind(null, endpoint);
+	endpoint.del     = del.bind(null, endpoint);
 	endpoint.browse  = browse.bind(null, endpoint);
 	endpoint.read    = read.bind(null, endpoint);
 	endpoint.edit    = edit.bind(null, endpoint);
 	endpoint.replace = replace.bind(null, endpoint);
 	endpoint.add     = add.bind(null, endpoint);
 	endpoint.destroy = destroy.bind(null, endpoint);
+	endpoint.list    = endpoint.browse;
+	endpoint.update  = endpoint.edit;
+	endpoint.create  = endpoint.add;
 
 	endpoint.addMiddleware    = addMiddleware.bind(null, endpoint);
 	endpoint.removeMiddleware = removeMiddleware.bind(null, endpoint);
