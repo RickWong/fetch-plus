@@ -165,17 +165,18 @@ const _callFetch = (endpoint, path = "", options = {}, middlewares = []) => {
 
 		const caught = errorMiddlewares.some((errorMiddleware) => {
 			try {
-				errorMiddleware(error);
-				return true;
+				return errorMiddleware(error);
 			}
 			catch (e) {
 				error = e;
 			}
 		});
 
-		if (!caught) {
-			throw error;
+		if (caught) {
+			return caught;
 		}
+
+		throw error;
 	});
 };
 
