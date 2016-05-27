@@ -5,9 +5,10 @@ import {compute} from "utils/compute";
 
 // Export using middleware creation notation.
 module.exports = (token) => (request) => {
-	if (token === undefined || token === null) {
+	const computedToken = compute(token);
+	if (computedToken === undefined || computedToken === null) {
 		return;
 	}
 
-	request.options.headers["Authorization"] = "Bearer " + compute(token);
+	request.options.headers["Authorization"] = "Bearer " + computedToken;
 };
