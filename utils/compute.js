@@ -23,7 +23,7 @@ const computeObject = (object) => {
 		return object;
 	}
 
-	let mapped = {};
+	let mapped = Array.isArray(object) ? [] : {};
 
 	Object.keys(object).forEach((key) => {
 		const value = object[key];
