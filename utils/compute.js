@@ -31,7 +31,7 @@ const computeObject = (object) => {
 		if (_isScalar(value)) {
 			mapped[key] = value;
 		}
-		else if (typeof FormData === "function" && value instanceof FormData) {
+		else if ((typeof FormData === "object" || typeof FormData === "function") && value instanceof FormData) {
 			mapped[key] = value;
 		}
 		else if (typeof value === "object") {
