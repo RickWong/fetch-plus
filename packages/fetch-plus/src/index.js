@@ -38,6 +38,7 @@ const createClient = (url, options = {}, middlewares = []) => {
 		middlewares.forEach(endpoint.addMiddleware);
 	}
 
+	endpoint.options.trimPathSlashes = options.trimPathSlashes === undefined ? true : options.trimPathSlashes;
 	return endpoint;
 };
 
@@ -79,7 +80,10 @@ const _callFetch = (endpoint, path = "", options = {}, middlewares = []) => {
 			path = [path];
 		}
 
-		path = _trimSlashes(path.map(compute).map(encodeURI).join("/"));
+		path = path.map(compute).map(encodeURI).join("/");
+		if (endpoint.options.trimPathSlashes) {
+			path = _trimSlashes(path);
+		}
 
 		if (path) {
 			path = "/" + path;
