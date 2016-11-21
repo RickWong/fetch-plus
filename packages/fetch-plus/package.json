@@ -25,5 +25,8 @@
   "scripts": {
     "build": "webpack --verbose --colors --display-error-details --config ../../webpack.umd.js ./src/index.js ./dist/index.js  --output-library=fetch-plus",
     "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "query-string": "^4.2.3"
   }
 }

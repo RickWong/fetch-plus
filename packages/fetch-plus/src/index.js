@@ -4,8 +4,9 @@
 import queryString from "query-string";
 import {compute, computeObject} from "utils/compute";
 
-const _trimSlashes = (string) => {
-	return string.toString().replace(/(^\/+|\/+$)/g, "");
+const _trimSlashes = (string, preserveTrailingSlash) => {
+	const pattern = preserveTrailingSlash ? /(^\/+)/g : /(^\/+|\/+$)/g;
+	return string.toString().replace(pattern, "");
 };
 
 const createClient = (url, options = {}, middlewares = []) => {
@@ -38,6 +39,7 @@ const createClient = (url, options = {}, middlewares = []) => {
 		middlewares.forEach(endpoint.addMiddleware);
 	}
 
+	endpoint.options.preserveTrailingSlash = options.preserveTrailingSlash === undefined ? false : options.preserveTrailingSlash;
 	return endpoint;
 };
 
@@ -79,7 +81,7 @@ const _callFetch = (endpoint, path = "", options = {}, middlewares = []) => {
 			path = [path];
 		}
 
-		path = _trimSlashes(path.map(compute).map(encodeURI).join("/"));
+		path = _trimSlashes(path.map(compute).map(encodeURI).join("/"), endpoint.options.preserveTrailingSlash);
 
 		if (path) {
 			path = "/" + path;
