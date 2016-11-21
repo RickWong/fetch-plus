@@ -69,9 +69,17 @@ const _callFetch = (endpoint, path = "", options = {}, middlewares = []) => {
 	let afterMiddlewares = [];
 	let errorMiddlewares = [];
 	let fetchFunc;
+	let normalizeFunc = _trimSlashes;
+
+	if (typeof options.normalizeUrl === "function") {
+		normalizeFunc = options.normalizeUrl;
+	}
+	else if (typeof endpoint.options.normalizeUrl === "function") {
+		normalizeFunc = endpoint.options.normalizeUrl;
+	}
 
 	return new Promise((resolve, reject) => {
-		const url = _trimSlashes(compute(endpoint.url));
+		const url = normalizeFunc(compute(endpoint.url));
 
 		path = compute(path);
 
@@ -79,18 +87,16 @@ const _callFetch = (endpoint, path = "", options = {}, middlewares = []) => {
 			path = [path];
 		}
 
-		path = _trimSlashes(path.map(compute).map(encodeURI).join("/"));
+		path = normalizeFunc(path.map(compute).map(encodeURI).join("/"));
 
-		if (path) {
+		if (path && path[0] !== "/") {
 			path = "/" + path;
 		}
 
-		if (typeof options.fetch === "function")
-		{
+		if (typeof options.fetch === "function") {
 			fetchFunc = options.fetch;
 		}
-		else if (typeof endpoint.options.fetch === "function")
-		{
+		else if (typeof endpoint.options.fetch === "function") {
 			fetchFunc = endpoint.options.fetch;
 		}
 		else if (typeof fetch === "function") {

@@ -21,7 +21,7 @@ async function main () {
 	await fetchPlus.fetch("http://jsonplaceholder.typicode.com/posts", {query: "_limit=2"}, [plusJson()]).then(renderJSON);
 
 	// Or create REST API client.
-	const client = fetchPlus.createClient("http://jsonplaceholder.typicode.com");
+	const client = fetchPlus.createClient("http://jsonplaceholder.typicode.com", {}, []);
 
 	// Add User-Agent header constructed with a key-value map.
 	client.addMiddleware(plusUserAgent({"fetch-plus": "1.0.0"}));
