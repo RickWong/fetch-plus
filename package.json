@@ -16,7 +16,7 @@
     "react": "15.4.0",
     "react-dom": "15.4.0",
     "webpack": "1.13.3",
-    "webpack-dev-server": "1.16.2"
+    "webpack-dev-server": "1.16.5"
   },
   "scripts": {
     "build": "concurrently \"npm run build-fetch-plus\" \"npm run build-fetch-plus-basicauth\" \"npm run build-fetch-plus-bearerauth\" \"npm run build-fetch-plus-csrf\" \"npm run build-fetch-plus-immutable\" \"npm run build-fetch-plus-json\" \"npm run build-fetch-plus-oauth\" \"npm run build-fetch-plus-useragent\" \"npm run build-fetch-plus-xml\" \"npm run build-fetch-plus-stream\"",
