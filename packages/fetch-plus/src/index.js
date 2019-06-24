@@ -169,22 +169,13 @@ const _callFetch = (endpoint, path = "", options = {}, middlewares = []) => {
 			throw error;
 		}
 
-		let recovered = null;
+		let promise = Promise.reject(error);
 
-		errorMiddlewares.some((errorMiddleware) => {
-			try {
-				return recovered = errorMiddleware(error);
-			}
-			catch (e) {
-				error = e;
-			}
+		errorMiddlewares.forEach((errorMiddleware) => {
+			promise = promise.catch(errorMiddleware)
 		});
 
-		if (recovered) {
-			return recovered;
-		}
-
-		throw error;
+		return promise;
 	});
 };
 
