@@ -2,7 +2,7 @@
   "dependencies": {
     "immutable": "3.8.1",
     "query-string": "^4.2.3",
-    "xml2js": "^0.4.16"
+    "xml2js": "^0.4.22"
   },
   "devDependencies": {
     "babel-core": "6.18.2",
